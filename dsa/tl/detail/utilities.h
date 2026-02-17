@@ -9,42 +9,53 @@
 
 namespace detail {
 
-template <class T> struct identity {
-  using type = T;
+template <class T>
+struct identity {
+    using type = T;
 };
 
-template <class T> using identity_t = typename identity<T>::type;
+template <class T>
+using identity_t = typename identity<T>::type;
 
 template <class Name, class Type, std::size_t Offset = 0>
 struct field_descriptor {
-  using type = Type;
+    using type = Type;
 
-  static constexpr std::size_t size = sizeof(type);
-  static constexpr std::size_t offset = Offset;
-  static constexpr fixed_string<Name::size> name = Name::value;
+    static constexpr std::size_t size = sizeof(type);
+    static constexpr std::size_t offset = Offset;
+    static constexpr fixed_string<Name::size> name = Name::value;
 };
 
-template <class Container> struct field_descriptors;
+template <class Container>
+struct field_descriptors;
 
-template <class... Fs> struct field_descriptors<tl::type_list<Fs...>> {
-  using fields_list = tl::type_list<Fs...>;
-  static constexpr std::size_t size = sizeof...(Fs);
-  static constexpr std::size_t total_size = (0 + ... + sizeof(Fs::type));
+template <class... Fs>
+struct field_descriptors<tl::type_list<Fs...>> {
+    using fields_list = tl::type_list<Fs...>;
+    static constexpr std::size_t size = sizeof...(Fs);
+    static constexpr std::size_t total_size = (0 + ... + sizeof(Fs::type));
 };
 
-template <class T> struct is_same {
-  template <class U> using impl = std::is_same<T, U>;
+template <class T>
+struct is_same {
+    template <class U>
+    using impl = std::is_same<T, U>;
 
-  template <class U> static constexpr bool value = impl<U>::value;
+    template <class U>
+    static constexpr bool value = impl<U>::value;
 };
 
-template <class> struct is_tuple : std::false_type {};
+template <class>
+struct is_tuple : std::false_type {};
 
-template <class... Us> struct is_tuple<std::tuple<Us...>> : std::true_type {};
+template <class... Us>
+struct is_tuple<std::tuple<Us...>> : std::true_type {};
 
-template <class T> static constexpr bool is_tuple_v = is_tuple<T>::value;
+template <class T>
+static constexpr bool is_tuple_v = is_tuple<T>::value;
 
-template <class> struct is_type_list : std::false_type {};
+template <class>
+struct is_type_list : std::false_type {};
 
 template <class... Us>
 struct is_type_list<tl::type_list<Us...>> : std::true_type {};
@@ -52,12 +63,14 @@ struct is_type_list<tl::type_list<Us...>> : std::true_type {};
 template <class T>
 static constexpr bool is_type_list_v = is_type_list<T>::value;
 
-template <class> struct is_variant : std::false_type {};
+template <class>
+struct is_variant : std::false_type {};
 
 template <class... Us>
 struct is_variant<std::variant<Us...>> : std::true_type {};
 
-template <class T> static constexpr bool is_variant_v = is_variant<T>::value;
+template <class T>
+static constexpr bool is_variant_v = is_variant<T>::value;
 
 template <class T, template <class...> class Tc>
 struct is_instance_of : std::false_type {};
@@ -78,7 +91,8 @@ static constexpr bool is_type_list_v = is_instance_of_v<T, tl::type_list>;*/
 template <std::size_t N>
 using const_value = std::integral_constant<std::size_t, N>;
 
-template <std::size_t N> using const_value_t = typename const_value<N>::type;
+template <std::size_t N>
+using const_value_t = typename const_value<N>::type;
 
 template <std::size_t N>
 static constexpr std::size_t const_value_v = const_value<N>::value;
@@ -91,4 +105,4 @@ static constexpr std::size_t const_value_v = const_value<N>::value;
 
 // template <class Variant>
 // concept variant_like = is_variant_v<Variant>;
-} // namespace detail
+}  // namespace detail
