@@ -56,6 +56,7 @@ TEST(CompileTest, BasicTest) {
     EXPECT_LE(2, 1);
     CHECK_COMPILE_TIME(10 == 10);
     EXPECT_TRUE(a == b);
+    return true;
 }
 
 int32_t main() { return testing::run_all_tests(); }
