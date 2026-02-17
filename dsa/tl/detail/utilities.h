@@ -17,6 +17,29 @@ struct identity {
 template <class T>
 using identity_t = typename identity<T>::type;
 
+template <size_t N>
+struct fixed_string_base {
+    char data[N] = {};
+    std::size_t size = N;
+
+    constexpr std::size_t length() const noexcept { return N - 1; }
+    constexpr fixed_string_base(const char (&str)[N]) {
+        for (size_t i = 0; i < N; ++i) {
+            data[i] = str[i];
+        }
+    }
+
+    constexpr operator std::string_view() const noexcept { return {data, N - 1}; }
+};
+
+template <size_t N>
+struct fixed_string : fixed_string_base<N> {
+    using fixed_string_base<N>::fixed_string_base;
+};
+
+template <size_t N>
+fixed_string(const char (&)[N]) -> fixed_string<N>;
+
 template <class Name, class Type, std::size_t Offset = 0>
 struct field_descriptor {
     using type = Type;
