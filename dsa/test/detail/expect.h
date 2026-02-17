@@ -74,7 +74,7 @@ static void expect_ge(const T &actual, const U &expected, const std::string &fil
 template <class T, class U>
 static void expect_lt(const T &actual, const U &expected, const std::string &fileName, int32_t lineNumber) {
     if (actual >= expected) {
-        print_failure_msg("CHECK_LT", actual, expected, fileName, lineNumber);
+        print_failure_msg("EXPECT_LT", actual, expected, fileName, lineNumber);
     } else {
         print_success_msg(" < ", actual, expected, fileName, lineNumber);
     }
@@ -83,7 +83,7 @@ static void expect_lt(const T &actual, const U &expected, const std::string &fil
 template <class T, class U>
 static void expect_gt(const T &actual, const U &expected, const std::string &fileName, int32_t lineNumber) {
     if (actual < expected) {
-        print_failure_msg("CHECK_GT", actual, expected, fileName, lineNumber);
+        print_failure_msg("EXPECT_GT", actual, expected, fileName, lineNumber);
     } else {
         print_success_msg(" > ", actual, expected, fileName, lineNumber);
     }
