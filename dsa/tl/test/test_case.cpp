@@ -54,17 +54,17 @@ TEST(type_list, type_queries) {
 TEST(type_list, element_access) {
     using List = tl::type_list<A, B, C, D>;
 
-    CHECK_COMPILE_TIME(std::is_same_v<typename List::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename List::at_t<1>, B>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename List::at_t<2>, C>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename List::at_t<3>, D>);
+    CHECK_COMPILE_TIME(std::is_same_v<List::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<List::at_t<1>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<List::at_t<2>, C>);
+    CHECK_COMPILE_TIME(std::is_same_v<List::at_t<3>, D>);
 
-    CHECK_COMPILE_TIME(std::is_same_v<typename List::front::type, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename List::back::type, D>);
+    CHECK_COMPILE_TIME(std::is_same_v<List::front::type, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<List::back::type, D>);
 
     using Empty = tl::type_list<>;
-    CHECK_COMPILE_TIME(std::is_same_v<typename Empty::front::type, Empty>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Empty::back::type, Empty>);
+    CHECK_COMPILE_TIME(std::is_same_v<Empty::front::type, Empty>);
+    CHECK_COMPILE_TIME(std::is_same_v<Empty::back::type, Empty>);
     return true;
 }
 
@@ -73,32 +73,32 @@ TEST(type_list, slice_operations) {
     using List = tl::type_list<A, B, C, D, E>;
     using List2 = tl::type_list<int, double, char, float>;
 
-    using Slice1 = typename List::slice_t<1, 3>;
+    using Slice1 = List::slice_t<1, 3>;
     CHECK_COMPILE_TIME(Slice1::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Slice1::at_t<0>, B>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Slice1::at_t<1>, C>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Slice1::at_t<2>, D>);
+    CHECK_COMPILE_TIME(std::is_same_v<Slice1::at_t<0>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<Slice1::at_t<1>, C>);
+    CHECK_COMPILE_TIME(std::is_same_v<Slice1::at_t<2>, D>);
 
-    using Head = typename List::head_t<2>;
+    using Head = List::head_t<2>;
     CHECK_COMPILE_TIME(Head::size == 2);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Head::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Head::at_t<1>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<Head::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<Head::at_t<1>, B>);
 
-    using Tail = typename List::tail_t<2>;
+    using Tail = List::tail_t<2>;
     CHECK_COMPILE_TIME(Tail::size == 2);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Tail::at_t<0>, D>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Tail::at_t<1>, E>);
+    CHECK_COMPILE_TIME(std::is_same_v<Tail::at_t<0>, D>);
+    CHECK_COMPILE_TIME(std::is_same_v<Tail::at_t<1>, E>);
 
-    using PopFront = typename List::pop_front_t;
+    using PopFront = List::pop_front_t;
     CHECK_COMPILE_TIME(PopFront::size == 4);
-    CHECK_COMPILE_TIME(std::is_same_v<typename PopFront::at_t<0>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<PopFront::at_t<0>, B>);
 
-    using PopBack = typename List::pop_back_t;
+    using PopBack = List::pop_back_t;
     CHECK_COMPILE_TIME(PopBack::size == 4);
-    CHECK_COMPILE_TIME(std::is_same_v<typename PopBack::back_t, D>);
+    CHECK_COMPILE_TIME(std::is_same_v<PopBack::back_t, D>);
 
     // 边界情况：空切片
-    using EmptySlice = typename List::slice_t<2, 0>;
+    using EmptySlice = List::slice_t<2, 0>;
     CHECK_COMPILE_TIME(EmptySlice::size == 0);
 
     using Sliced1 = List2::slice_t<1, 2>;
@@ -158,16 +158,16 @@ TEST(type_list, find_and_count) {
 TEST(type_list, transform_operations) {
     using List = tl::type_list<A, B, C>;
 
-    using Transformed = typename List::transform_t<add_pointer_t>;
+    using Transformed = List::transform_t<add_pointer_t>;
     CHECK_COMPILE_TIME(Transformed::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Transformed::at_t<0>, A *>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Transformed::at_t<1>, B *>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Transformed::at_t<2>, C *>);
+    CHECK_COMPILE_TIME(std::is_same_v<Transformed::at_t<0>, A *>);
+    CHECK_COMPILE_TIME(std::is_same_v<Transformed::at_t<1>, B *>);
+    CHECK_COMPILE_TIME(std::is_same_v<Transformed::at_t<2>, C *>);
 
     // replace
-    using Replaced = typename List::replace_t<B, D>;
+    using Replaced = List::replace_t<B, D>;
     CHECK_COMPILE_TIME(Replaced::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Replaced::at_t<1>, D>);
+    CHECK_COMPILE_TIME(std::is_same_v<Replaced::at_t<1>, D>);
     return true;
 }
 
@@ -175,18 +175,18 @@ TEST(type_list, transform_operations) {
 TEST(type_list, filter_operations) {
     using List = tl::type_list<int_type<1>, A, int_type<2>, B, int_type<3>>;
 
-    using Filtered = typename List::filter_t<is_int_type>;
+    using Filtered = List::filter_t<is_int_type>;
     CHECK_COMPILE_TIME(Filtered::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Filtered::at_t<0>, int_type<1>>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Filtered::at_t<1>, int_type<2>>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Filtered::at_t<2>, int_type<3>>);
+    CHECK_COMPILE_TIME(std::is_same_v<Filtered::at_t<0>, int_type<1>>);
+    CHECK_COMPILE_TIME(std::is_same_v<Filtered::at_t<1>, int_type<2>>);
+    CHECK_COMPILE_TIME(std::is_same_v<Filtered::at_t<2>, int_type<3>>);
 
-    using Rejected = typename List::reject_t<is_int_type>;
+    using Rejected = List::reject_t<is_int_type>;
     CHECK_COMPILE_TIME(Rejected::size == 2);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Rejected::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Rejected::at_t<1>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<Rejected::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<Rejected::at_t<1>, B>);
 
-    using Removed = typename List::remove_t<A>;
+    using Removed = List::remove_t<A>;
     CHECK_COMPILE_TIME(Removed::size == 4);
     CHECK_COMPILE_TIME(!Removed::contains_v<A>);
 
@@ -211,32 +211,32 @@ TEST(type_list, set_operations) {
 
     // unique
     using ListWithDups = tl::type_list<A, B, A, C, B, D>;
-    using UniqueList = typename ListWithDups::unique_t;
+    using UniqueList = ListWithDups::unique_t;
     CHECK_COMPILE_TIME(UniqueList::size == 4);
     CHECK_COMPILE_TIME(ListWithDups::no_duplicates == false);
     CHECK_COMPILE_TIME(UniqueList::no_duplicates == true);
 
     // reverse
-    using Reversed = typename List1::reverse_t;
+    using Reversed = List1::reverse_t;
     CHECK_COMPILE_TIME(Reversed::size == 4);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Reversed::at_t<0>, D>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Reversed::at_t<3>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<Reversed::at_t<0>, D>);
+    CHECK_COMPILE_TIME(std::is_same_v<Reversed::at_t<3>, A>);
 
     // intersection
-    using Intersection = typename List1::intersect_with_t<List2>;
+    using Intersection = List1::intersect_with_t<List2>;
     CHECK_COMPILE_TIME(Intersection::size == 2);
     CHECK_COMPILE_TIME(Intersection::contains_v<C>);
     CHECK_COMPILE_TIME(Intersection::contains_v<D>);
 
     // union
-    using Union = typename List1::union_with_t<List2>;
+    using Union = List1::union_with_t<List2>;
     CHECK_COMPILE_TIME(Union::size == 6);
     CHECK_COMPILE_TIME(Union::contains_v<A>);
     CHECK_COMPILE_TIME(Union::contains_v<E>);
     CHECK_COMPILE_TIME(Union::contains_v<F>);
 
     // difference
-    using Difference = typename List1::difference_with_t<List2>;
+    using Difference = List1::difference_with_t<List2>;
     CHECK_COMPILE_TIME(Difference::size == 2);
     CHECK_COMPILE_TIME(Difference::contains_v<A>);
     CHECK_COMPILE_TIME(Difference::contains_v<B>);
@@ -253,18 +253,18 @@ TEST(type_list, concatenation) {
     using List2 = tl::type_list<C, D>;
     using List4 = tl::type_list<int, double, char, float>;
 
-    using Concat1 = typename List1::concat_t<List2>;
+    using Concat1 = List1::concat_t<List2>;
     CHECK_COMPILE_TIME(Concat1::size == 4);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Concat1::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Concat1::at_t<3>, D>);
+    CHECK_COMPILE_TIME(std::is_same_v<Concat1::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<Concat1::at_t<3>, D>);
 
-    using Concat2 = typename List1::append_t<C, D>;
+    using Concat2 = List1::append_t<C, D>;
     CHECK_COMPILE_TIME(Concat2::size == 4);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Concat2::at_t<2>, C>);
+    CHECK_COMPILE_TIME(std::is_same_v<Concat2::at_t<2>, C>);
 
-    using Concat3 = typename List1::prepend_t<E>;
+    using Concat3 = List1::prepend_t<E>;
     CHECK_COMPILE_TIME(Concat3::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Concat3::at_t<0>, E>);
+    CHECK_COMPILE_TIME(std::is_same_v<Concat3::at_t<0>, E>);
 
     using Appended = List4::append_t<void *>;
     CHECK_COMPILE_TIME(std::is_same_v<Appended, tl::type_list<int, double, char, float, void *>>);
@@ -282,24 +282,24 @@ TEST(type_list, conversions) {
     using List = tl::type_list<A, B, C>;
 
     // 元组转换
-    using Tuple = typename List::to_tuple_t;
+    using Tuple = List::to_tuple_t;
     CHECK_COMPILE_TIME(std::is_same_v<Tuple, std::tuple<A, B, C>>);
 
     using FromTuple = detail::to_type_list_t<std::tuple<D, E>>;
     CHECK_COMPILE_TIME(std::is_same_v<FromTuple, tl::type_list<D, E>>);
 
-    using RebindTuple = typename List::from_container_t<std::tuple<D, E, F>>;
-    CHECK_COMPILE_TIME(std::is_same_v<typename RebindTuple::at_t<0>, D>);
+    using RebindTuple = List::from_container_t<std::tuple<D, E, F>>;
+    CHECK_COMPILE_TIME(std::is_same_v<RebindTuple::at_t<0>, D>);
 
     // variant转换
-    using Variant = typename List::to_variant_t;
+    using Variant = List::to_variant_t;
     CHECK_COMPILE_TIME(std::is_same_v<Variant, std::variant<A, B, C>>);
 
     using FromVariant = detail::to_type_list_t<std::variant<D, E>>;
     CHECK_COMPILE_TIME(std::is_same_v<FromVariant, tl::type_list<D, E>>);
 
-    using RebindVariant = typename List::from_container_t<std::variant<D, E, F>>;
-    CHECK_COMPILE_TIME(std::is_same_v<typename RebindVariant::at_t<0>, D>);
+    using RebindVariant = List::from_container_t<std::variant<D, E, F>>;
+    CHECK_COMPILE_TIME(std::is_same_v<RebindVariant::at_t<0>, D>);
 
     using TupleTypes = std::tuple<int, double, char>;
     using FromTuple0 = detail::to_type_list_t<TupleTypes>;
@@ -317,10 +317,10 @@ TEST(type_list, zip_unzip) {
     using List3 = tl::type_list<char, short, long>;
 
     // zip
-    using Zipped = typename List1::zip_t<List2, List3>;
+    using Zipped = List1::zip_t<List2, List3>;
     CHECK_COMPILE_TIME(Zipped::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Zipped::at_t<0>, std::tuple<A, int, char>>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Zipped::at_t<1>, std::tuple<B, double, short>>);
+    CHECK_COMPILE_TIME(std::is_same_v<Zipped::at_t<0>, std::tuple<A, int, char>>);
+    CHECK_COMPILE_TIME(std::is_same_v<Zipped::at_t<1>, std::tuple<B, double, short>>);
 
     // unzip
     // clang-format off
@@ -331,7 +331,7 @@ TEST(type_list, zip_unzip) {
     >;
     // clang-format on
 
-    using Unzipped = typename TupleList::unzip_t;
+    using Unzipped = TupleList::unzip_t;
     CHECK_COMPILE_TIME(std::tuple_size_v<Unzipped> == 2);
 
     // clang-format off
@@ -344,7 +344,7 @@ TEST(type_list, zip_unzip) {
     using Unzipped0 = List4::unzip_at_t<0>;
     CHECK_COMPILE_TIME(std::is_same_v<Unzipped0, tl::type_list<A, B, C>>);
 
-    using Unzipped1 = typename TupleList::unzip_at_t<1>;
+    using Unzipped1 = TupleList::unzip_at_t<1>;
     CHECK_COMPILE_TIME(std::is_same_v<Unzipped1, tl::type_list<int, double, float>>);
 
     // Zip/Unzip
@@ -367,14 +367,14 @@ TEST(type_list, flatten) {
     using List3 = tl::type_list<int, char, double, float, bool, long, short>;
 
     using Nested1 = tl::type_list<A, tl::type_list<B, C>, D>;
-    using Flat1 = typename Nested1::flatten_t;
+    using Flat1 = Nested1::flatten_t;
 
     using Nested2 = tl::type_list<std::tuple<A, B>, tl::type_list<C, D>, std::variant<E, F>>;
-    using Flat2 = typename Nested2::flatten_t;
+    using Flat2 = Nested2::flatten_t;
     CHECK_COMPILE_TIME(Flat1::size == 4);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Flat1::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Flat1::at_t<1>, B>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Flat1::at_t<3>, D>);
+    CHECK_COMPILE_TIME(std::is_same_v<Flat1::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<Flat1::at_t<1>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<Flat1::at_t<3>, D>);
     CHECK_COMPILE_TIME(Flat2::size == 6);
 
     // clang-format off
@@ -666,14 +666,14 @@ TEST(type_list, edge_cases) {
     CHECK_COMPILE_TIME(Empty::size == 0);
     CHECK_COMPILE_TIME(Empty::is_empty);
     CHECK_COMPILE_TIME(!Empty::contains_v<A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Empty::front::type, Empty>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Empty::back::type, Empty>);
+    CHECK_COMPILE_TIME(std::is_same_v<Empty::front_t, Empty>);
+    CHECK_COMPILE_TIME(std::is_same_v<Empty::back_t, Empty>);
 
     // 单元素列表测试
     using Single = tl::type_list<A>;
     CHECK_COMPILE_TIME(Single::size == 1);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Single::front_t, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename Single::back_t, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<Single::front_t, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<Single::back_t, A>);
     CHECK_COMPILE_TIME(Single::pop_front_t::size == 0);
     CHECK_COMPILE_TIME(Single::pop_back_t::size == 0);
 
@@ -691,7 +691,7 @@ TEST(type_list, edge_cases) {
     // 类型转换边界
     using ComplexList = tl::type_list<std::tuple<A, B>, std::variant<C, D>, tl::type_list<E, F>>;
 
-    using FlatComplex = typename ComplexList::flatten_t;
+    using FlatComplex = ComplexList::flatten_t;
     CHECK_COMPILE_TIME(FlatComplex::size == 6);
 
     // 无效操作保护测试
@@ -699,7 +699,7 @@ TEST(type_list, edge_cases) {
 
     // 超出范围的slice应该无法编译（通过SFINAE保护）
     // 以下代码应该编译失败，我们通过注释来记录预期行为
-    // using BadSlice = typename List::slice_t<2, 2>; // 应该编译失败
+    // using BadSlice =  List::slice_t<2, 2>; // 应该编译失败
 
     // 空列表的转换
     using EmptyTuple = tl::empty_list::to_tuple_t;
@@ -713,7 +713,7 @@ TEST(type_list, edge_cases) {
 // 16. 累积操作测试
 TEST(type_list, accumulate) {
     using List = tl::type_list<int_type<1>, int_type<2>, int_type<3>>;
-    using SumResult = typename List::accumulate_t<sum_accumulator, int_type<0>>;
+    using SumResult = List::accumulate_t<sum_accumulator, int_type<0>>;
     CHECK_COMPILE_TIME(SumResult::value == 6);
 
     using SizeResult = detail::accumulate<type_name_length, std::integral_constant<size_t, 0>, A, B, C>::type;
@@ -884,60 +884,60 @@ TEST(type_list, replace_and_insert) {
     using List = tl::type_list<A, B, C, D, E>;
 
     // 测试 replace_at
-    using ReplacedAt1 = typename List::replace_at_t<1, X>;  // 假设有X类型
+    using ReplacedAt1 = List::replace_at_t<1, X>;  // 假设有X类型
     CHECK_COMPILE_TIME(ReplacedAt1::size == 5);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ReplacedAt1::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ReplacedAt1::at_t<1>, X>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ReplacedAt1::at_t<2>, C>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ReplacedAt1::at_t<4>, E>);
+    CHECK_COMPILE_TIME(std::is_same_v<ReplacedAt1::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<ReplacedAt1::at_t<1>, X>);
+    CHECK_COMPILE_TIME(std::is_same_v<ReplacedAt1::at_t<2>, C>);
+    CHECK_COMPILE_TIME(std::is_same_v<ReplacedAt1::at_t<4>, E>);
 
     // 替换第一个元素
-    using ReplacedFirst = typename List::replace_at_t<0, X>;
-    CHECK_COMPILE_TIME(std::is_same_v<typename ReplacedFirst::at_t<0>, X>);
+    using ReplacedFirst = List::replace_at_t<0, X>;
+    CHECK_COMPILE_TIME(std::is_same_v<ReplacedFirst::at_t<0>, X>);
 
     // 替换最后一个元素
-    using ReplacedLast = typename List::replace_at_t<4, X>;
-    CHECK_COMPILE_TIME(std::is_same_v<typename ReplacedLast::at_t<4>, X>);
+    using ReplacedLast = List::replace_at_t<4, X>;
+    CHECK_COMPILE_TIME(std::is_same_v<ReplacedLast::at_t<4>, X>);
 
     // 测试 insert_at
-    using InsertedAt1 = typename List::insert_at_t<1, X>;
+    using InsertedAt1 = List::insert_at_t<1, X>;
     CHECK_COMPILE_TIME(InsertedAt1::size == 6);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedAt1::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedAt1::at_t<1>, X>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedAt1::at_t<2>, B>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedAt1::at_t<5>, E>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedAt1::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedAt1::at_t<1>, X>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedAt1::at_t<2>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedAt1::at_t<5>, E>);
 
     // 插入到头部
-    using InsertedAtFront = typename List::insert_at_t<0, X>;
+    using InsertedAtFront = List::insert_at_t<0, X>;
     CHECK_COMPILE_TIME(InsertedAtFront::size == 6);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedAtFront::at_t<0>, X>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedAtFront::at_t<1>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedAtFront::at_t<0>, X>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedAtFront::at_t<1>, A>);
 
     // 插入到尾部（注意：插入到size位置相当于append）
-    using InsertedAtEnd = typename List::insert_at_t<5, X>;
+    using InsertedAtEnd = List::insert_at_t<5, X>;
     CHECK_COMPILE_TIME(InsertedAtEnd::size == 6);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedAtEnd::at_t<4>, E>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedAtEnd::at_t<5>, X>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedAtEnd::at_t<4>, E>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedAtEnd::at_t<5>, X>);
 
     // 边际情况：插入到空列表
     using EmptyList = tl::type_list<>;
-    using InsertedIntoEmpty = typename EmptyList::insert_at_t<0, A>;
+    using InsertedIntoEmpty = EmptyList::insert_at_t<0, A>;
     CHECK_COMPILE_TIME(InsertedIntoEmpty::size == 1);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedIntoEmpty::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedIntoEmpty::at_t<0>, A>);
 
     // 边际情况：单元素列表的替换和插入
     using Single = tl::type_list<A>;
-    using ReplacedSingle = typename Single::replace_at_t<0, B>;
+    using ReplacedSingle = Single::replace_at_t<0, B>;
     CHECK_COMPILE_TIME(ReplacedSingle::size == 1);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ReplacedSingle::at_t<0>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<ReplacedSingle::at_t<0>, B>);
 
-    using InsertedBefore = typename Single::insert_at_t<0, B>;
+    using InsertedBefore = Single::insert_at_t<0, B>;
     CHECK_COMPILE_TIME(InsertedBefore::size == 2);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedBefore::at_t<0>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedBefore::at_t<0>, B>);
 
-    using InsertedAfter = typename Single::insert_at_t<1, B>;
+    using InsertedAfter = Single::insert_at_t<1, B>;
     CHECK_COMPILE_TIME(InsertedAfter::size == 2);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedAfter::at_t<1>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedAfter::at_t<1>, B>);
     return true;
 }
 
@@ -1034,35 +1034,35 @@ TEST(type_list, combined_operations) {
     constexpr size_t first_replacable = OriginalList::find_first_if<is_replacable>;
     CHECK_COMPILE_TIME(first_replacable == 1);  // B在索引1
 
-    using ReplacedFirst = typename OriginalList::replace_at_t<first_replacable, X>;
-    CHECK_COMPILE_TIME(std::is_same_v<typename ReplacedFirst::at_t<1>, X>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ReplacedFirst::at_t<3>, D>);  // D没有被替换
+    using ReplacedFirst = OriginalList::replace_at_t<first_replacable, X>;
+    CHECK_COMPILE_TIME(std::is_same_v<ReplacedFirst::at_t<1>, X>);
+    CHECK_COMPILE_TIME(std::is_same_v<ReplacedFirst::at_t<3>, D>);  // D没有被替换
 
     // 场景2：找到最后一个可替换元素并替换它
     constexpr size_t last_replacable = OriginalList::find_last_if<is_replacable>;
     CHECK_COMPILE_TIME(last_replacable == 3);  // D在索引3
 
-    using ReplacedLast = typename OriginalList::replace_at_t<last_replacable, X>;
-    CHECK_COMPILE_TIME(std::is_same_v<typename ReplacedLast::at_t<3>, X>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ReplacedLast::at_t<1>, B>);  // B没有被替换
+    using ReplacedLast = OriginalList::replace_at_t<last_replacable, X>;
+    CHECK_COMPILE_TIME(std::is_same_v<ReplacedLast::at_t<3>, X>);
+    CHECK_COMPILE_TIME(std::is_same_v<ReplacedLast::at_t<1>, B>);  // B没有被替换
 
     // 场景3：在第一个不可替换元素前插入新元素
     constexpr size_t first_not_replacable = OriginalList::find_first_not_if<is_replacable>;
     CHECK_COMPILE_TIME(first_not_replacable == 0);  // A在索引0
 
-    using InsertedBeforeFirst = typename OriginalList::insert_at_t<first_not_replacable, X>;
+    using InsertedBeforeFirst = OriginalList::insert_at_t<first_not_replacable, X>;
     CHECK_COMPILE_TIME(InsertedBeforeFirst::size == 6);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedBeforeFirst::at_t<0>, X>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedBeforeFirst::at_t<1>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedBeforeFirst::at_t<0>, X>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedBeforeFirst::at_t<1>, A>);
 
     // 场景4：在最后一个不可替换元素后插入新元素
     constexpr size_t last_not_replacable = OriginalList::find_last_not_if<is_replacable>;
     CHECK_COMPILE_TIME(last_not_replacable == 4);  // E在索引4
 
-    using InsertedAfterLast = typename OriginalList::insert_at_t<last_not_replacable + 1, X>;
+    using InsertedAfterLast = OriginalList::insert_at_t<last_not_replacable + 1, X>;
     CHECK_COMPILE_TIME(InsertedAfterLast::size == 6);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedAfterLast::at_t<5>, X>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename InsertedAfterLast::at_t<4>, E>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedAfterLast::at_t<5>, X>);
+    CHECK_COMPILE_TIME(std::is_same_v<InsertedAfterLast::at_t<4>, E>);
 
     // 场景5：替换所有偶数（使用循环模拟，但这里我们只替换第一个作为示例）
     using NumberList = tl::type_list<int_type<1>, int_type<2>, int_type<3>, int_type<4>, int_type<5>>;
@@ -1070,7 +1070,7 @@ TEST(type_list, combined_operations) {
     constexpr size_t first_even = NumberList::find_first_if<is_even_value>;
     CHECK_COMPILE_TIME(first_even == 1);  // int_type<2>在索引1
 
-    using ReplacedEven = typename NumberList::replace_at_t<first_even, int_type<99>>;
+    using ReplacedEven = NumberList::replace_at_t<first_even, int_type<99>>;
     CHECK_COMPILE_TIME(ReplacedEven::size == 5);
     CHECK_COMPILE_TIME(ReplacedEven::at_t<1>::value == 99);
     return true;
@@ -1085,49 +1085,49 @@ TEST(type_list, extended_zip_operations) {
 
     // 测试 type_list 与 type_list 的 zip
     using List2 = tl::type_list<D, E, F>;
-    using ZippedLists = typename List1::zip_t<List2>;
+    using ZippedLists = List1::zip_t<List2>;
     CHECK_COMPILE_TIME(ZippedLists::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedLists::at_t<0>, std::tuple<A, D>>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedLists::at_t<1>, std::tuple<B, E>>);
+    CHECK_COMPILE_TIME(std::is_same_v<ZippedLists::at_t<0>, std::tuple<A, D>>);
+    CHECK_COMPILE_TIME(std::is_same_v<ZippedLists::at_t<1>, std::tuple<B, E>>);
 
     // 测试 type_list 与 std::tuple 的 zip
-    using ZippedWithTuple = typename List1::zip_t<Tuple1>;
+    using ZippedWithTuple = List1::zip_t<Tuple1>;
     CHECK_COMPILE_TIME(ZippedWithTuple::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedWithTuple::at_t<0>, std::tuple<A, int>>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedWithTuple::at_t<1>, std::tuple<B, double>>);
+    CHECK_COMPILE_TIME(std::is_same_v<ZippedWithTuple::at_t<0>, std::tuple<A, int>>);
+    CHECK_COMPILE_TIME(std::is_same_v<ZippedWithTuple::at_t<1>, std::tuple<B, double>>);
 
     // 测试 type_list 与 std::variant 的 zip
-    using ZippedWithVariant = typename List1::zip_t<Variant1>;
+    using ZippedWithVariant = List1::zip_t<Variant1>;
     CHECK_COMPILE_TIME(ZippedWithVariant::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedWithVariant::at_t<0>, std::tuple<A, char>>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedWithVariant::at_t<1>, std::tuple<B, short>>);
+    CHECK_COMPILE_TIME(std::is_same_v<ZippedWithVariant::at_t<0>, std::tuple<A, char>>);
+    CHECK_COMPILE_TIME(std::is_same_v<ZippedWithVariant::at_t<1>, std::tuple<B, short>>);
 
     // 测试三者的混合 zip
-    using ZippedMixed = typename List1::zip_t<Tuple1, Variant1>;
+    using ZippedMixed = List1::zip_t<Tuple1, Variant1>;
     CHECK_COMPILE_TIME(ZippedMixed::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedMixed::at_t<0>, std::tuple<A, int, char>>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedMixed::at_t<1>, std::tuple<B, double, short>>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedMixed::at_t<2>, std::tuple<C, float, long>>);
+    CHECK_COMPILE_TIME(std::is_same_v<ZippedMixed::at_t<0>, std::tuple<A, int, char>>);
+    CHECK_COMPILE_TIME(std::is_same_v<ZippedMixed::at_t<1>, std::tuple<B, double, short>>);
+    CHECK_COMPILE_TIME(std::is_same_v<ZippedMixed::at_t<2>, std::tuple<C, float, long>>);
 
     // 测试 std::tuple 与 std::tuple 的 zip（通过转换为type_list）
     using Tuple2 = std::tuple<X, Y, Z>;  // 假设有X, Y, Z类型
     using ListFromTuple1 = detail::to_type_list_t<Tuple1>;
     using ListFromTuple2 = detail::to_type_list_t<Tuple2>;
-    using ZippedTuples = typename ListFromTuple1::zip_t<ListFromTuple2>;
+    using ZippedTuples = ListFromTuple1::zip_t<ListFromTuple2>;
     CHECK_COMPILE_TIME(ZippedTuples::size == 3);
 
     // 测试 std::variant 与 std::variant 的 zip
     using Variant2 = std::variant<bool, unsigned, size_t>;
     using ListFromVariant1 = detail::to_type_list_t<Variant1>;
     using ListFromVariant2 = detail::to_type_list_t<Variant2>;
-    using ZippedVariants = typename ListFromVariant1::zip_t<ListFromVariant2>;
+    using ZippedVariants = ListFromVariant1::zip_t<ListFromVariant2>;
     CHECK_COMPILE_TIME(ZippedVariants::size == 3);
 
     // 测试边际情况：空容器的zip
     using EmptyList = tl::type_list<>;
 
     // 空type_list的zip
-    using ZippedEmptyLists = typename EmptyList::zip_t<EmptyList>;
+    using ZippedEmptyLists = EmptyList::zip_t<EmptyList>;
     CHECK_COMPILE_TIME(ZippedEmptyLists::size == 0);
 
     // 测试不同容器类型但相同内容的zip
@@ -1135,9 +1135,9 @@ TEST(type_list, extended_zip_operations) {
     using TupleABC = std::tuple<A, B, C>;
     using VariantABC = std::variant<A, B, C>;
 
-    using ZippedSameTypes = typename ListABC::zip_t<TupleABC, VariantABC>;
+    using ZippedSameTypes = ListABC::zip_t<TupleABC, VariantABC>;
     CHECK_COMPILE_TIME(ZippedSameTypes::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedSameTypes::at_t<0>, std::tuple<A, A, A>>);
+    CHECK_COMPILE_TIME(std::is_same_v<ZippedSameTypes::at_t<0>, std::tuple<A, A, A>>);
     return true;
 }
 
@@ -1148,69 +1148,69 @@ TEST(type_list, extended_unzip_operations) {
     using TupleList =
         tl::type_list<std::tuple<A, int, char>, std::tuple<B, double, short>, std::tuple<C, float, long>>;
 
-    using UnzippedTuples = typename TupleList::unzip_t;
+    using UnzippedTuples = TupleList::unzip_t;
     CHECK_COMPILE_TIME(std::tuple_size_v<UnzippedTuples> == 3);
 
     // 检查unzip后的第一个列表（A, B, C）
     using FirstUnzipped = std::tuple_element_t<0, UnzippedTuples>;
     CHECK_COMPILE_TIME(FirstUnzipped::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename FirstUnzipped::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename FirstUnzipped::at_t<1>, B>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename FirstUnzipped::at_t<2>, C>);
+    CHECK_COMPILE_TIME(std::is_same_v<FirstUnzipped::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<FirstUnzipped::at_t<1>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<FirstUnzipped::at_t<2>, C>);
 
     // 检查unzip后的第二个列表（int, double, float）
     using SecondUnzipped = std::tuple_element_t<1, UnzippedTuples>;
     CHECK_COMPILE_TIME(SecondUnzipped::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename SecondUnzipped::at_t<0>, int>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename SecondUnzipped::at_t<1>, double>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename SecondUnzipped::at_t<2>, float>);
+    CHECK_COMPILE_TIME(std::is_same_v<SecondUnzipped::at_t<0>, int>);
+    CHECK_COMPILE_TIME(std::is_same_v<SecondUnzipped::at_t<1>, double>);
+    CHECK_COMPILE_TIME(std::is_same_v<SecondUnzipped::at_t<2>, float>);
 
     // 测试包含std::variant的type_list的unzip
     using VariantList =
         tl::type_list<std::variant<A, B>, std::variant<int, double, char>, std::variant<char, short>>;
 
-    using UnzippedVariants = typename VariantList::unzip_t;
+    using UnzippedVariants = VariantList::unzip_t;
     CHECK_COMPILE_TIME(std::tuple_size_v<UnzippedVariants> == 2);  // 每个variant有2个类型
 
     // 检查unzip后的第一个列表（A, int, char）
     using FirstVariantUnzipped = std::tuple_element_t<0, UnzippedVariants>;
     CHECK_COMPILE_TIME(FirstVariantUnzipped::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename FirstVariantUnzipped::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename FirstVariantUnzipped::at_t<1>, int>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename FirstVariantUnzipped::at_t<2>, char>);
+    CHECK_COMPILE_TIME(std::is_same_v<FirstVariantUnzipped::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<FirstVariantUnzipped::at_t<1>, int>);
+    CHECK_COMPILE_TIME(std::is_same_v<FirstVariantUnzipped::at_t<2>, char>);
 
     // 检查unzip后的第二个列表（B, double, short）
     using SecondVariantUnzipped = std::tuple_element_t<1, UnzippedVariants>;
     CHECK_COMPILE_TIME(SecondVariantUnzipped::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename SecondVariantUnzipped::at_t<0>, B>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename SecondVariantUnzipped::at_t<1>, double>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename SecondVariantUnzipped::at_t<2>, short>);
+    CHECK_COMPILE_TIME(std::is_same_v<SecondVariantUnzipped::at_t<0>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<SecondVariantUnzipped::at_t<1>, double>);
+    CHECK_COMPILE_TIME(std::is_same_v<SecondVariantUnzipped::at_t<2>, short>);
 
     // 测试混合容器类型的unzip
     using MixedContainerList =
         tl::type_list<std::tuple<A, int, bool>, tl::type_list<B, double>, std::variant<C, float>>;
 
-    using UnzippedMixed = typename MixedContainerList::unzip_t;
+    using UnzippedMixed = MixedContainerList::unzip_t;
     CHECK_COMPILE_TIME(std::tuple_size_v<UnzippedMixed> == 2);
 
     // 测试边际情况：空列表的unzip
     using EmptyList = tl::type_list<>;
-    using UnzippedEmpty = typename EmptyList::unzip_t;
+    using UnzippedEmpty = EmptyList::unzip_t;
     CHECK_COMPILE_TIME(std::is_same_v<UnzippedEmpty, std::tuple<>>);
 
     // 测试边际情况：单元素列表的unzip
     using SingleTupleList = tl::type_list<std::tuple<A, int>>;
-    using UnzippedSingle = typename SingleTupleList::unzip_t;
+    using UnzippedSingle = SingleTupleList::unzip_t;
     CHECK_COMPILE_TIME(std::tuple_size_v<UnzippedSingle> == 2);
 
     using FirstOfSingle = std::tuple_element_t<0, UnzippedSingle>;
     CHECK_COMPILE_TIME(FirstOfSingle::size == 1);
-    CHECK_COMPILE_TIME(std::is_same_v<typename FirstOfSingle::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<FirstOfSingle::at_t<0>, A>);
 
     // 测试包含不同类型容器的列表
     using HeterogeneousList = tl::type_list<std::tuple<A, B>, tl::type_list<C, D>, std::tuple<E, F>>;
 
-    using UnzippedHeterogeneous = typename HeterogeneousList::unzip_t;
+    using UnzippedHeterogeneous = HeterogeneousList::unzip_t;
     CHECK_COMPILE_TIME(std::tuple_size_v<UnzippedHeterogeneous> == 2);
     return true;
 }
@@ -1222,82 +1222,82 @@ TEST(type_list, extended_unzip_at) {
                                     std::tuple<C, float, long, B, X, Z>>;
 
     // 测试 unzip_at<0> - 获取所有元组的第一个元素
-    using UnzippedAt0 = typename TupleList::unzip_at_t<0>;
+    using UnzippedAt0 = TupleList::unzip_at_t<0>;
     CHECK_COMPILE_TIME(UnzippedAt0::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename UnzippedAt0::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename UnzippedAt0::at_t<1>, B>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename UnzippedAt0::at_t<2>, C>);
+    CHECK_COMPILE_TIME(std::is_same_v<UnzippedAt0::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<UnzippedAt0::at_t<1>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<UnzippedAt0::at_t<2>, C>);
 
     // 测试 unzip_at<1> - 获取所有元组的第二个元素
-    using UnzippedAt1 = typename TupleList::unzip_at_t<1>;
+    using UnzippedAt1 = TupleList::unzip_at_t<1>;
     CHECK_COMPILE_TIME(UnzippedAt1::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename UnzippedAt1::at_t<0>, int>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename UnzippedAt1::at_t<1>, double>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename UnzippedAt1::at_t<2>, float>);
+    CHECK_COMPILE_TIME(std::is_same_v<UnzippedAt1::at_t<0>, int>);
+    CHECK_COMPILE_TIME(std::is_same_v<UnzippedAt1::at_t<1>, double>);
+    CHECK_COMPILE_TIME(std::is_same_v<UnzippedAt1::at_t<2>, float>);
 
     // 测试 unzip_at<2> - 获取所有元组的第三个元素
-    using UnzippedAt2 = typename TupleList::unzip_at_t<2>;
+    using UnzippedAt2 = TupleList::unzip_at_t<2>;
     CHECK_COMPILE_TIME(UnzippedAt2::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename UnzippedAt2::at_t<0>, char>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename UnzippedAt2::at_t<1>, short>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename UnzippedAt2::at_t<2>, long>);
+    CHECK_COMPILE_TIME(std::is_same_v<UnzippedAt2::at_t<0>, char>);
+    CHECK_COMPILE_TIME(std::is_same_v<UnzippedAt2::at_t<1>, short>);
+    CHECK_COMPILE_TIME(std::is_same_v<UnzippedAt2::at_t<2>, long>);
 
     // 测试包含std::variant的type_list的unzip_at
     using VariantList = tl::type_list<std::variant<A, int>, std::variant<B, double>, std::variant<C, float>>;
 
     // 测试 unzip_at<0> - 获取所有variant的第一个类型
-    using VariantUnzippedAt0 = typename VariantList::unzip_at_t<0>;
+    using VariantUnzippedAt0 = VariantList::unzip_at_t<0>;
     CHECK_COMPILE_TIME(VariantUnzippedAt0::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename VariantUnzippedAt0::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename VariantUnzippedAt0::at_t<1>, B>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename VariantUnzippedAt0::at_t<2>, C>);
+    CHECK_COMPILE_TIME(std::is_same_v<VariantUnzippedAt0::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<VariantUnzippedAt0::at_t<1>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<VariantUnzippedAt0::at_t<2>, C>);
 
     // 测试 unzip_at<1> - 获取所有variant的第二个类型
-    using VariantUnzippedAt1 = typename VariantList::unzip_at_t<1>;
+    using VariantUnzippedAt1 = VariantList::unzip_at_t<1>;
     CHECK_COMPILE_TIME(VariantUnzippedAt1::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename VariantUnzippedAt1::at_t<0>, int>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename VariantUnzippedAt1::at_t<1>, double>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename VariantUnzippedAt1::at_t<2>, float>);
+    CHECK_COMPILE_TIME(std::is_same_v<VariantUnzippedAt1::at_t<0>, int>);
+    CHECK_COMPILE_TIME(std::is_same_v<VariantUnzippedAt1::at_t<1>, double>);
+    CHECK_COMPILE_TIME(std::is_same_v<VariantUnzippedAt1::at_t<2>, float>);
 
     // 测试混合容器类型的unzip_at
     using MixedList = tl::type_list<std::tuple<A, int>, tl::type_list<B, double>, std::variant<C, float>>;
 
     // 测试 unzip_at<0> - 获取所有容器的第一个元素类型
-    using MixedUnzippedAt0 = typename MixedList::unzip_at_t<0>;
+    using MixedUnzippedAt0 = MixedList::unzip_at_t<0>;
     CHECK_COMPILE_TIME(MixedUnzippedAt0::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename MixedUnzippedAt0::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename MixedUnzippedAt0::at_t<1>, B>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename MixedUnzippedAt0::at_t<2>, C>);
+    CHECK_COMPILE_TIME(std::is_same_v<MixedUnzippedAt0::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<MixedUnzippedAt0::at_t<1>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<MixedUnzippedAt0::at_t<2>, C>);
 
     // 测试 unzip_at<1> - 获取所有容器的第二个元素类型
-    using MixedUnzippedAt1 = typename MixedList::unzip_at_t<1>;
+    using MixedUnzippedAt1 = MixedList::unzip_at_t<1>;
     CHECK_COMPILE_TIME(MixedUnzippedAt1::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename MixedUnzippedAt1::at_t<0>, int>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename MixedUnzippedAt1::at_t<1>, double>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename MixedUnzippedAt1::at_t<2>, float>);
+    CHECK_COMPILE_TIME(std::is_same_v<MixedUnzippedAt1::at_t<0>, int>);
+    CHECK_COMPILE_TIME(std::is_same_v<MixedUnzippedAt1::at_t<1>, double>);
+    CHECK_COMPILE_TIME(std::is_same_v<MixedUnzippedAt1::at_t<2>, float>);
 
     // 测试边际情况：空列表的unzip_at
     using EmptyList = tl::type_list<>;
-    using EmptyUnzippedAt0 = typename EmptyList::unzip_at_t<0>;
+    using EmptyUnzippedAt0 = EmptyList::unzip_at_t<0>;
     CHECK_COMPILE_TIME(EmptyUnzippedAt0::size == 0);
 
     // 测试边际情况：索引超出范围的情况
     // 注意：由于静态断言，以下代码应该无法编译
-    // using BadUnzipAt = typename TupleList::unzip_at_t<3>; // 应该编译失败
+    // using BadUnzipAt =  TupleList::unzip_at_t<3>; // 应该编译失败
 
     // 测试单元素列表的unzip_at
     using SingleElementList = tl::type_list<std::tuple<A, int>>;
-    using SingleUnzippedAt0 = typename SingleElementList::unzip_at_t<0>;
+    using SingleUnzippedAt0 = SingleElementList::unzip_at_t<0>;
     CHECK_COMPILE_TIME(SingleUnzippedAt0::size == 1);
-    CHECK_COMPILE_TIME(std::is_same_v<typename SingleUnzippedAt0::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<SingleUnzippedAt0::at_t<0>, A>);
 
     // 测试辅助函数unzip_at（非成员函数版本）
     using HelperUnzippedAt0 = detail::unzip_at<
         0, tl::type_list<std::tuple<A, int>, tl::type_list<B, double>, std::variant<C, float>>>::type;
     CHECK_COMPILE_TIME(HelperUnzippedAt0::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename HelperUnzippedAt0::at_t<0>, A>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename HelperUnzippedAt0::at_t<1>, B>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename HelperUnzippedAt0::at_t<2>, C>);
+    CHECK_COMPILE_TIME(std::is_same_v<HelperUnzippedAt0::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<HelperUnzippedAt0::at_t<1>, B>);
+    CHECK_COMPILE_TIME(std::is_same_v<HelperUnzippedAt0::at_t<2>, C>);
     return true;
 }
 
@@ -1311,16 +1311,16 @@ TEST(type_list, comprehensive_container_operations) {
     using UIVariants = std::variant<user_view, product_view, order_view>;
 
     // 1. 将不同类型zip到一起
-    using ZippedData = typename DatabaseTypes::zip_t<APITypes, UIVariants>;
+    using ZippedData = DatabaseTypes::zip_t<APITypes, UIVariants>;
     CHECK_COMPILE_TIME(ZippedData::size == 3);
 
     // 2. 对zipped数据进行转换
-    using OnlyDatabaseTypes = typename ZippedData::transform_t<extract_first_type_t>;
+    using OnlyDatabaseTypes = ZippedData::transform_t<extract_first_type_t>;
     CHECK_COMPILE_TIME(OnlyDatabaseTypes::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename OnlyDatabaseTypes::at_t<0>, user>);
+    CHECK_COMPILE_TIME(std::is_same_v<OnlyDatabaseTypes::at_t<0>, user>);
 
     // 3. 将zipped数据unzip
-    using UnzippedAll = typename ZippedData::unzip_t;
+    using UnzippedAll = ZippedData::unzip_t;
     CHECK_COMPILE_TIME(std::tuple_size_v<UnzippedAll> == 3);
 
     // 获取所有User相关类型
@@ -1328,9 +1328,9 @@ TEST(type_list, comprehensive_container_operations) {
     CHECK_COMPILE_TIME(AllUserTypes::size == 3);
 
     // 4. 使用unzip_at获取特定维度的类型
-    using AllDTOs = typename ZippedData::unzip_at_t<1>;
+    using AllDTOs = ZippedData::unzip_at_t<1>;
     CHECK_COMPILE_TIME(AllDTOs::size == 3);
-    CHECK_COMPILE_TIME(std::is_same_v<typename AllDTOs::at_t<0>, user_dto>);
+    CHECK_COMPILE_TIME(std::is_same_v<AllDTOs::at_t<0>, user_dto>);
 
     // 5. 测试嵌套容器的处理
     using NestedContainerList =
@@ -1338,7 +1338,7 @@ TEST(type_list, comprehensive_container_operations) {
                       std::tuple<tl::type_list<E, F>, float>>;
 
     // 对嵌套容器进行unzip
-    using UnzippedNested = typename NestedContainerList::unzip_t;
+    using UnzippedNested = NestedContainerList::unzip_t;
     CHECK_COMPILE_TIME(std::tuple_size_v<UnzippedNested> == 2);
 
     // 获取所有type_list
@@ -1353,14 +1353,14 @@ TEST(type_list, comprehensive_container_operations) {
     using SourceList = tl::type_list<A, B, C, D, E>;
 
     // 转换为元组
-    using AsTuples = typename SourceList::transform_t<std::tuple>;
+    using AsTuples = SourceList::transform_t<std::tuple>;
     CHECK_COMPILE_TIME(AsTuples::size == 5);
 
     // 7. 测试错误处理（期望的编译失败情况）
     // 注意：以下代码应该无法编译，因为容器大小不一致
     // using MismatchedList1 = tl::type_list<A, B, C>;
     // using MismatchedTuple1 = std::tuple<int, double>; // 大小不匹配
-    // using ShouldFailZip = typename MismatchedList1::zip_t<MismatchedTuple1>; //
+    // using ShouldFailZip =  MismatchedList1::zip_t<MismatchedTuple1>; //
     // 应该编译失败
 
     // 使用不同类型的容器但相同大小应该可以
@@ -1368,7 +1368,7 @@ TEST(type_list, comprehensive_container_operations) {
     using MatchedTuple = std::tuple<int, double>;
     using MatchedVariant = std::variant<char, short>;
 
-    using ValidZip = typename MatchedList::zip_t<MatchedTuple, MatchedVariant>;
+    using ValidZip = MatchedList::zip_t<MatchedTuple, MatchedVariant>;
     CHECK_COMPILE_TIME(ValidZip::size == 2);
     return true;
 }
@@ -1379,15 +1379,15 @@ TEST(type_list, edge_cases_and_error_handling) {
     using EmptyList = tl::type_list<>;
 
     // 空容器的zip
-    using ZipEmpty = typename EmptyList::zip_t<EmptyList>;
+    using ZipEmpty = EmptyList::zip_t<EmptyList>;
     CHECK_COMPILE_TIME(ZipEmpty::size == 0);
 
     // 空容器的unzip
-    using UnzipEmpty = typename EmptyList::unzip_t;
+    using UnzipEmpty = EmptyList::unzip_t;
     CHECK_COMPILE_TIME(std::is_same_v<UnzipEmpty, std::tuple<>>);
 
     // 空容器的unzip_at
-    using UnzipAtEmpty = typename EmptyList::unzip_at_t<0>;
+    using UnzipAtEmpty = EmptyList::unzip_at_t<0>;
     CHECK_COMPILE_TIME(UnzipAtEmpty::size == 0);
 
     // 2. 测试单元素容器的各种操作
@@ -1396,13 +1396,13 @@ TEST(type_list, edge_cases_and_error_handling) {
     using SingleVariant = std::variant<char>;
 
     // 单元素容器的zip
-    using ZipSingle = typename SingleList::zip_t<SingleTuple, SingleVariant>;
+    using ZipSingle = SingleList::zip_t<SingleTuple, SingleVariant>;
     CHECK_COMPILE_TIME(ZipSingle::size == 1);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZipSingle::at_t<0>, std::tuple<A, int, char>>);
+    CHECK_COMPILE_TIME(std::is_same_v<ZipSingle::at_t<0>, std::tuple<A, int, char>>);
 
     // 单元素容器的unzip
     using SingleTupleList = tl::type_list<std::tuple<A, int, char>>;
-    using UnzipSingle = typename SingleTupleList::unzip_t;
+    using UnzipSingle = SingleTupleList::unzip_t;
     CHECK_COMPILE_TIME(std::tuple_size_v<UnzipSingle> == 3);
 
     // 3. 测试包含相同类型但不同值的variant
@@ -1410,15 +1410,15 @@ TEST(type_list, edge_cases_and_error_handling) {
     using VariantList = tl::type_list<VariantWithDuplicates, VariantWithDuplicates>;
 
     // unzip_at应该能正确处理重复类型
-    using UnzippedVariant0 = typename VariantList::unzip_at_t<0>;
+    using UnzippedVariant0 = VariantList::unzip_at_t<0>;
     CHECK_COMPILE_TIME(UnzippedVariant0::size == 2);
-    CHECK_COMPILE_TIME(std::is_same_v<typename UnzippedVariant0::at_t<0>, A>);
+    CHECK_COMPILE_TIME(std::is_same_v<UnzippedVariant0::at_t<0>, A>);
 
     // 4. 测试包含引用类型的容器
     using RefTuple = std::tuple<A &, const B &, C &&>;
     using RefList = tl::type_list<RefTuple>;
 
-    using UnzippedRefs = typename RefList::unzip_t;
+    using UnzippedRefs = RefList::unzip_t;
     CHECK_COMPILE_TIME(std::tuple_size_v<UnzippedRefs> == 3);
 
     // 5. 测试包含函数指针等复杂类型的容器
@@ -1427,7 +1427,7 @@ TEST(type_list, edge_cases_and_error_handling) {
     using ComplexList = tl::type_list<ComplexTuple>;
 
     // 这些复杂类型应该也能正确处理
-    using UnzippedComplex = typename ComplexList::unzip_t;
+    using UnzippedComplex = ComplexList::unzip_t;
     CHECK_COMPILE_TIME(std::tuple_size_v<UnzippedComplex> == 3);
 
     // 6. 测试超大容器的性能（编译期压力测试）
@@ -1443,12 +1443,12 @@ TEST(type_list, edge_cases_and_error_handling) {
                                   int_type<15>, int_type<16>, int_type<17>, int_type<18>, int_type<19>>;
 
     // zip大列表应该能正常工作
-    using ZipLarge = typename LargeList::zip_t<LargeTuple>;
+    using ZipLarge = LargeList::zip_t<LargeTuple>;
     CHECK_COMPILE_TIME(ZipLarge::size == 20);
 
     // unzip大列表应该能正常工作
-    using TupleOfLarge = typename LargeList::transform_t<std::tuple>;
-    using UnzipLarge = typename TupleOfLarge::unzip_t;
+    using TupleOfLarge = LargeList::transform_t<std::tuple>;
+    using UnzipLarge = TupleOfLarge::unzip_t;
     CHECK_COMPILE_TIME(std::tuple_size_v<UnzipLarge> == 1);
 
     // 7. 测试类型推导和SFINAE友好性
@@ -1458,12 +1458,12 @@ TEST(type_list, edge_cases_and_error_handling) {
     // 验证helper函数与成员函数的一致性
     using TestList = tl::type_list<std::tuple<A, int>, std::tuple<B, double>>;
 
-    using MemberUnzip = typename TestList::unzip_t;
+    using MemberUnzip = TestList::unzip_t;
     using HelperUnzip = detail::unzip<TestList>::type;
 
     CHECK_COMPILE_TIME(std::is_same_v<MemberUnzip, HelperUnzip>);
 
-    using MemberUnzipAt0 = typename TestList::unzip_at_t<0>;
+    using MemberUnzipAt0 = TestList::unzip_at_t<0>;
     using HelperUnzipAt0 =
         detail::unzip_at<0, tl::type_list<std::tuple<A, int>, std::tuple<B, double>>>::type;
 
@@ -1477,30 +1477,29 @@ TEST(type_list, new_transform_features) {
     using SourceList = tl::type_list<A, B, C, D, E>;
 
     // 使用std::integral_constant作为索引
-    using IndexedList =
-        typename SourceList::transform_t<make_indexed_tuple_t, std::integral_constant<std::size_t, 0>>;
+    using IndexedList = SourceList::transform_t<make_indexed_tuple_t, std::integral_constant<std::size_t, 0>>;
 
     CHECK_COMPILE_TIME(IndexedList::size == 5);
     CHECK_COMPILE_TIME(
-        std::is_same_v<typename IndexedList::at_t<0>, std::tuple<A, std::integral_constant<std::size_t, 0>>>);
+        std::is_same_v<IndexedList::at_t<0>, std::tuple<A, std::integral_constant<std::size_t, 0>>>);
     CHECK_COMPILE_TIME(
-        std::is_same_v<typename IndexedList::at_t<4>, std::tuple<E, std::integral_constant<std::size_t, 0>>>);
+        std::is_same_v<IndexedList::at_t<4>, std::tuple<E, std::integral_constant<std::size_t, 0>>>);
 
     // 测试带标签的transform
     struct UserTag {};
-    using TaggedList = typename SourceList::transform_t<make_tagged_type_t, UserTag>;
+    using TaggedList = SourceList::transform_t<make_tagged_type_t, UserTag>;
 
     CHECK_COMPILE_TIME(TaggedList::size == 5);
-    CHECK_COMPILE_TIME(std::is_same_v<typename TaggedList::at_t<0>, std::tuple<A, UserTag>>);
+    CHECK_COMPILE_TIME(std::is_same_v<TaggedList::at_t<0>, std::tuple<A, UserTag>>);
 
     // 测试带多个额外参数的transform
     struct Modifier1 {};
     struct Modifier2 {};
 
-    using DecoratedList = typename SourceList::transform_t<decorate_type_t, Modifier1, Modifier2>;
+    using DecoratedList = SourceList::transform_t<decorate_type_t, Modifier1, Modifier2>;
 
     CHECK_COMPILE_TIME(DecoratedList::size == 5);
-    CHECK_COMPILE_TIME(std::is_same_v<typename DecoratedList::at_t<0>, std::tuple<A, Modifier1, Modifier2>>);
+    CHECK_COMPILE_TIME(std::is_same_v<DecoratedList::at_t<0>, std::tuple<A, Modifier1, Modifier2>>);
 
     // 测试更复杂的场景：为每个元素生成不同的索引
     // 我们需要先生成一个索引列表，然后进行zip操作
@@ -1510,65 +1509,64 @@ TEST(type_list, new_transform_features) {
     using IndexList = decltype(make_index_list(IndexSequence{}));
 
     // 使用zip将源列表和索引列表组合
-    using ZippedWithIndices = typename SourceList::zip_t<IndexList>;
+    using ZippedWithIndices = SourceList::zip_t<IndexList>;
 
     CHECK_COMPILE_TIME(ZippedWithIndices::size == 5);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedWithIndices::at_t<0>,
-                                      std::tuple<A, std::integral_constant<std::size_t, 0>>>);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedWithIndices::at_t<4>,
-                                      std::tuple<E, std::integral_constant<std::size_t, 4>>>);
+    CHECK_COMPILE_TIME(
+        std::is_same_v<ZippedWithIndices::at_t<0>, std::tuple<A, std::integral_constant<std::size_t, 0>>>);
+    CHECK_COMPILE_TIME(
+        std::is_same_v<ZippedWithIndices::at_t<4>, std::tuple<E, std::integral_constant<std::size_t, 4>>>);
 
-    using ModifiedList = typename ZippedWithIndices::transform_t<extract_and_modify_t>;
+    using ModifiedList = ZippedWithIndices::transform_t<extract_and_modify_t>;
 
     CHECK_COMPILE_TIME(ModifiedList::size == 5);
     CHECK_COMPILE_TIME(
-        std::is_same_v<typename ModifiedList::at_t<0>, std::tuple<A, std::integral_constant<std::size_t, 0>,
-                                                                  std::integral_constant<std::size_t, 0>>>);
+        std::is_same_v<ModifiedList::at_t<0>, std::tuple<A, std::integral_constant<std::size_t, 0>,
+                                                         std::integral_constant<std::size_t, 0>>>);
     CHECK_COMPILE_TIME(
-        std::is_same_v<typename ModifiedList::at_t<1>, std::tuple<B, std::integral_constant<std::size_t, 1>,
-                                                                  std::integral_constant<std::size_t, 2>>>);
+        std::is_same_v<ModifiedList::at_t<1>, std::tuple<B, std::integral_constant<std::size_t, 1>,
+                                                         std::integral_constant<std::size_t, 2>>>);
 
-    using ConfigResult = typename SourceList::transform_t<configurable_transformer_apply_t, int, double>;
+    using ConfigResult = SourceList::transform_t<configurable_transformer_apply_t, int, double>;
     CHECK_COMPILE_TIME(ConfigResult::size == 5);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ConfigResult::at_t<0>, std::tuple<A, int, double>>);
+    CHECK_COMPILE_TIME(std::is_same_v<ConfigResult::at_t<0>, std::tuple<A, int, double>>);
 
     // 测试边界情况：空列表的transform
     using EmptyList = tl::type_list<>;
-    using TransformedEmpty = typename EmptyList::transform_t<make_indexed_tuple_t, int>;
+    using TransformedEmpty = EmptyList::transform_t<make_indexed_tuple_t, int>;
     CHECK_COMPILE_TIME(TransformedEmpty::size == 0);
 
     // 测试单元素列表的transform
     using SingleList = tl::type_list<A>;
-    using TransformedSingle = typename SingleList::transform_t<make_indexed_tuple_t, int>;
+    using TransformedSingle = SingleList::transform_t<make_indexed_tuple_t, int>;
     CHECK_COMPILE_TIME(TransformedSingle::size == 1);
-    CHECK_COMPILE_TIME(std::is_same_v<typename TransformedSingle::at_t<0>, std::tuple<A, int>>);
+    CHECK_COMPILE_TIME(std::is_same_v<TransformedSingle::at_t<0>, std::tuple<A, int>>);
 
     // 测试transform链式调用
-    using FirstTransform = typename SourceList::transform_t<make_tagged_type_t, int>;
-    using SecondTransform = typename FirstTransform::transform_t<make_tagged_type_t, double>;
+    using FirstTransform = SourceList::transform_t<make_tagged_type_t, int>;
+    using SecondTransform = FirstTransform::transform_t<make_tagged_type_t, double>;
     CHECK_COMPILE_TIME(SecondTransform::size == 5);
-    CHECK_COMPILE_TIME(
-        std::is_same_v<typename SecondTransform::at_t<0>, std::tuple<std::tuple<A, int>, double>>);
+    CHECK_COMPILE_TIME(std::is_same_v<SecondTransform::at_t<0>, std::tuple<std::tuple<A, int>, double>>);
 
     // 测试更实用的场景：为类型添加属性和元数据
-    using WithFieldInfo = typename SourceList::transform_t<add_field_info_t>;
+    using WithFieldInfo = SourceList::transform_t<add_field_info_t>;
     CHECK_COMPILE_TIME(WithFieldInfo::size == 5);
 
     // 验证FieldInfo是否被正确添加
-    CHECK_COMPILE_TIME(std::is_same_v<typename WithFieldInfo::at_t<0>, std::tuple<A, field_info>>);
-    using WithTraits = typename SourceList::transform_t<add_type_traits_t>;
+    CHECK_COMPILE_TIME(std::is_same_v<WithFieldInfo::at_t<0>, std::tuple<A, field_info>>);
+    using WithTraits = SourceList::transform_t<add_type_traits_t>;
     CHECK_COMPILE_TIME(WithTraits::size == 5);
 
     // 测试A的类型特性（假设A是平凡类型）
-    using FirstWithTraits = typename WithTraits::at_t<0>;
+    using FirstWithTraits = WithTraits::at_t<0>;
     CHECK_COMPILE_TIME(std::tuple_size_v<FirstWithTraits> == 3);
-    using WithSerialization = typename SourceList::transform_t<serialization_info_t>;
+    using WithSerialization = SourceList::transform_t<serialization_info_t>;
     CHECK_COMPILE_TIME(WithSerialization::size == 5);
 
     // 验证序列化信息是否正确
-    using FirstSerialized = typename WithSerialization::at_t<0>;
+    using FirstSerialized = WithSerialization::at_t<0>;
     CHECK_COMPILE_TIME(std::tuple_size_v<FirstSerialized> == 3);
-    using ConditionalResult = typename SourceList::transform_t<conditional_transform_t>;
+    using ConditionalResult = SourceList::transform_t<conditional_transform_t>;
     CHECK_COMPILE_TIME(ConditionalResult::size == 5);
     return true;
 }
@@ -1583,11 +1581,11 @@ TEST(type_list, indexed_transform) {
     // 方法1: 使用zip实现带索引的转换
     using SourceList = tl::type_list<A, B, C, D, E>;
     using Indices = decltype(make_index_list(std::make_index_sequence<SourceList::size>{}));
-    using ZippedWithIndices = typename SourceList::zip_t<Indices>;
+    using ZippedWithIndices = SourceList::zip_t<Indices>;
 
     CHECK_COMPILE_TIME(ZippedWithIndices::size == 5);
-    CHECK_COMPILE_TIME(std::is_same_v<typename ZippedWithIndices::at_t<0>,
-                                      std::tuple<A, std::integral_constant<std::size_t, 0>>>);
+    CHECK_COMPILE_TIME(
+        std::is_same_v<ZippedWithIndices::at_t<0>, std::tuple<A, std::integral_constant<std::size_t, 0>>>);
 
     // support from c++20
     // 方法2: 使用for_each实现带索引的转换
@@ -1605,7 +1603,7 @@ TEST(type_list, indexed_transform) {
     }());
 
     CHECK_COMPILE_TIME(IndexedListForEach::size == 5);
-    CHECK_COMPILE_TIME(std::is_same_v<typename IndexedListForEach::at_t<0>,
+    CHECK_COMPILE_TIME(std::is_same_v< IndexedListForEach::at_t<0>,
                                       std::tuple<A,
     std::integral_constant<std::size_t, 0>>>);
 
@@ -1617,18 +1615,18 @@ TEST(type_list, indexed_transform) {
     // 让我们测试一个实际应用场景：为类型生成带索引的序列化信息
 
     // 使用zip和transform实现
-    using Zipped = typename SourceList::zip_t<Indices>;
+    using Zipped = SourceList::zip_t<Indices>;
 
-    using SerializedWithIndices = typename Zipped::transform_t<apply_serialize_t>;
+    using SerializedWithIndices = Zipped::transform_t<apply_serialize_t>;
 
     CHECK_COMPILE_TIME(SerializedWithIndices::size == 5);
 
     // 验证第一个元素的序列化信息
-    using FirstSerialized = typename SerializedWithIndices::at_t<0>;
+    using FirstSerialized = SerializedWithIndices::at_t<0>;
     CHECK_COMPILE_TIME(std::tuple_size_v<FirstSerialized> == 4);
 
     // 验证偏移量计算
-    using SecondSerialized = typename SerializedWithIndices::at_t<1>;
+    using SecondSerialized = SerializedWithIndices::at_t<1>;
     using SecondOffset = std::tuple_element_t<3, SecondSerialized>;
     CHECK_COMPILE_TIME(SecondOffset::value == sizeof(A));  // B的偏移量应该是A的大小
 
@@ -1640,15 +1638,14 @@ TEST(type_list, indexed_transform) {
                       std::integral_constant<std::size_t, sizeof(A) + sizeof(B) + sizeof(C)>,
                       std::integral_constant<std::size_t, sizeof(A) + sizeof(B) + sizeof(C) + sizeof(D)>>;
 
-    using ZippedWithOffsets = typename SourceList::zip_t<Indices, OffsetsList>;
+    using ZippedWithOffsets = SourceList::zip_t<Indices, OffsetsList>;
 
-    using SerializedWithAccumulatedOffsets =
-        typename ZippedWithOffsets::transform_t<apply_accumulated_serialize_t>;
+    using SerializedWithAccumulatedOffsets = ZippedWithOffsets::transform_t<apply_accumulated_serialize_t>;
 
     CHECK_COMPILE_TIME(SerializedWithAccumulatedOffsets::size == 5);
 
     // 验证最后一个元素的偏移量
-    using LastSerialized = typename SerializedWithAccumulatedOffsets::at_t<4>;
+    using LastSerialized = SerializedWithAccumulatedOffsets::at_t<4>;
     using LastOffset = std::tuple_element_t<3, LastSerialized>;
     CHECK_COMPILE_TIME(LastOffset::value == sizeof(A) + sizeof(B) + sizeof(C) + sizeof(D));
 
