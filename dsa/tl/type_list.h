@@ -179,6 +179,12 @@ struct type_list {
     template <class T>
     static constexpr std::size_t index_of = find_first_if<detail::is_same<T>::template impl>;
 
+    template <class T>
+    static constexpr std::size_t last_index_of = find_last_if<detail::is_same<T>::template impl>;
+
+    template <class T>
+    static constexpr std::size_t find = index_of<T>;
+
     /*template <class List>
     static constexpr bool is_subset_of = [] {
         if constexpr (size > List::size) {

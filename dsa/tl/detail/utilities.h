@@ -128,4 +128,11 @@ static constexpr std::size_t const_value_v = const_value<N>::value;
 
 // template <class Variant>
 // concept variant_like = is_variant_v<Variant>;
+
+// template <class Fn>
+// concept callable = std::is_invocable_v<Fn>;
+
+// template <class Container>
+// concept container_like = is_tuple_v<Container> || is_type_list_v<Container> || is_variant_v<Container>;
+
 }  // namespace detail
