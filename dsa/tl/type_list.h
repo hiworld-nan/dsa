@@ -99,6 +99,9 @@ struct type_list {
     template <template <class...> class Container>
     using to_container_t = Container<Ts...>;
 
+    template <class T, T... Is>
+    using to_value_list_t = type_list<std::integral_constant<T, Is>...>;
+
     template <template <class...> class Action, class... Us>
     using transform = type_list<Action<Ts, Us...>...>;
     template <template <class...> class Action, class... Us>
@@ -109,8 +112,14 @@ struct type_list {
     template <template <class, class> class Action, class Init>
     using accumulate_t = typename accumulate<Action, Init>::type;
 
+    template <template <class> class Pred, class T>
+    using replace_if = type_list<std::conditional_t<Pred<Ts>::value, T, Ts>...>;
+    template <template <class> class Pred, class T>
+    using replace_if_t = typename replace_if<Pred, T>::type;
+
     template <class From, class To>
-    using replace = type_list<std::conditional_t<std::is_same_v<Ts, From>, To, Ts>...>;
+    // using replace = type_list<std::conditional_t<std::is_same_v<Ts, From>, To, Ts>...>;
+    using replace = replace_if<detail::is_same<From>::template impl, To>;
     template <class From, class To>
     using replace_t = typename replace<From, To>::type;
 
