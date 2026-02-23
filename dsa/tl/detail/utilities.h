@@ -120,6 +120,7 @@ using const_value_t = typename const_value<N>::type;
 template <std::size_t N>
 static constexpr std::size_t const_value_v = const_value<N>::value;
 
+#if __cpp_concepts
 // template <class List>
 // concept type_list_like = is_type_list_v<List>;
 
@@ -134,5 +135,10 @@ static constexpr std::size_t const_value_v = const_value<N>::value;
 
 // template <class Container>
 // concept container_like = is_tuple_v<Container> || is_type_list_v<Container> || is_variant_v<Container>;
+
+// template <class F, class T>
+// concept meta_function_like = requires { typename F::template apply<T>::type; };
+
+#endif
 
 }  // namespace detail

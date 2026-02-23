@@ -15,5 +15,4 @@ template <class... Ts>
 struct type_list;
 
 using empty_list = type_list<>;
-
 }  // namespace tl
