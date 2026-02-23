@@ -160,7 +160,7 @@ static inline int run_all_tests() {
             std::cout << "[  ✗ FAILED  ] " << test.name << "\n";
         }
     }
-    return results.failed_checks() > 0 ? EXIT_FAILURE : EXIT_SUCCESS;
+    return results.fail_test() > 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 }  // namespace testing
