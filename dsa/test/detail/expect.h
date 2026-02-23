@@ -23,7 +23,7 @@ struct Compare {
     };
 
     template <class T, class U>
-    static inline bool equal(T actual, U expected) {
+    static inline bool equal(const T& actual, const U& expected) {
         if constexpr (std::is_arithmetic<T>::value && std::is_arithmetic<U>::value) {
             using common_t = typename common<T, U>::type;
             const common_t a = static_cast<common_t>(actual);
@@ -48,7 +48,7 @@ struct Compare {
     }
 
     template <class T, class U>
-    static inline bool gt(T actual, U expected) {
+    static inline bool gt(const T& actual, const U& expected) {
         if constexpr (std::is_arithmetic<T>::value && std::is_arithmetic<U>::value) {
             using common_t = typename common<T, U>::type;
             const common_t a = static_cast<common_t>(actual);
@@ -70,7 +70,7 @@ struct Compare {
     }
 
     template <class T, class U>
-    static inline bool lt(T actual, U expected) {
+    static inline bool lt(const T& actual, const U& expected) {
         if constexpr (std::is_arithmetic<T>::value && std::is_arithmetic<U>::value) {
             using common_t = typename common<T, U>::type;
             const common_t a = static_cast<common_t>(actual);
@@ -91,12 +91,12 @@ struct Compare {
     }
 
     template <class T, class U>
-    static inline bool ge(T actual, U expected) {
+    static inline bool ge(const T& actual, const U& expected) {
         return !lt(actual, expected);
     }
 
     template <class T, class U>
-    static inline bool le(T actual, U expected) {
+    static inline bool le(const T& actual, const U& expected) {
         return !gt(actual, expected);
     }
 };
