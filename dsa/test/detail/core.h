@@ -61,9 +61,9 @@ public:
         return failed_checks_;
     }
 
-    int32_t passed_checks() const {
+    int32_t failed_test() const {
         std::lock_guard<std::mutex> lock(mtx_);
-        return passed_checks_;
+        return failed_tests_;
     }
 
     void report() const {
@@ -160,7 +160,7 @@ static inline int run_all_tests() {
             std::cout << "[  ✗ FAILED  ] " << test.name << "\n";
         }
     }
-    return results.fail_test() > 0 ? EXIT_FAILURE : EXIT_SUCCESS;
+    return results.failed_test() > 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 }  // namespace testing
