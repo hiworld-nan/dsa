@@ -149,6 +149,7 @@ struct reject {
 
 template <class Container, std::size_t I>
 struct select {
+private:
     static_assert(is_container_v<Container>, "select requires a type_list/variant/tuple");
     static_assert(I < container_size_v<Container>, "Index out of range for select");
 
@@ -165,6 +166,52 @@ struct select {
         using type = typename impl<Idx - 1, tl::type_list<Ts...>>::type;
     };*/
 
+    // 核心工具：提取参数包中第N个类型（解决本次错误的关键）
+    /*template <std::size_t N, typename... Ts>
+    struct nth_type;
+
+    // 偏特化1：N=0时，取第一个类型
+    template <typename T, typename... Rest>
+    struct nth_type<0, T, Rest...> {
+        using type = T;
+    };
+
+    // 偏特化2：N>0时，递归去掉第一个类型，N减1
+    template <std::size_t N, typename T, typename... Rest>
+    struct nth_type<N, T, Rest...> {
+        using type = typename nth_type<N - 1, Rest...>::type;
+    };
+
+    // 简化别名：直接获取第N个类型
+    template <std::size_t N, typename... Ts>
+    using nth_type_t = typename nth_type<N, Ts...>::type;
+
+    // 3. 你原有的indexed_type（无需修改）
+    template <std::size_t I, typename T>
+    struct indexed_type {
+        using type = T;
+    };
+
+    // 4. 你原有的indexed_list（无需修改）
+    template <typename IndexSeq, typename... Ts>
+    struct indexed_list;
+
+    template <std::size_t... Is, typename... Ts>
+    struct indexed_list<std::index_sequence<Is...>, Ts...> : indexed_type<Is, Ts>... {};
+
+    // 5. 核心：fast_at模板（修复关键）
+    template <typename List>
+    struct fast_at;
+
+    // 偏特化：针对type_list<Ts...>
+    template <typename... Ts>
+    struct fast_at<type_list<Ts...>> : indexed_list<std::index_sequence_for<Ts...>, Ts...> {
+        // 修复：先用nth_type_t获取第N个类型，再传给indexed_type
+        template <std::size_t N>
+        using at = typename indexed_type<N, nth_type_t<N, Ts...>>::type;
+    };*/
+
+public:
     using type = std::tuple_element_t<I, detail::to_tuple_t<Container>>;
 };
 

@@ -46,6 +46,11 @@ struct container_traits<std::variant<Ts...>> {
 template <class, class>
 struct convert_to;
 
+template <template <class...> class From, class... Ts, template <class...> class To>
+struct convert_to<From<Ts...>, To<>> {
+    using type = To<Ts...>;
+};
+
 template <template <class...> class From, class... Ts, template <class...> class To, class... Us>
 struct convert_to<From<Ts...>, To<Us...>> {
     using type = To<Ts...>;
