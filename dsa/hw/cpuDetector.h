@@ -1,5 +1,6 @@
 #pragma once
 
+// generate by ai, don't work under hybrid mode or virtualization env
 // todo : verify
 #include <algorithm>
 #include <array>
