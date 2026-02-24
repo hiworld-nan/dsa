@@ -11,8 +11,7 @@ CurrDir = ./
 BaseDir = ./..
 DetailDir = $(BaseDir)/detail
 TestDir = ../../test
-TestDetailDir = $(TestDir)/detail
-IncludeDir = -I./$(CurrDir) -I./$(TestDir) -I./$(TestDetailDir) -I./$(BaseDir) -I./$(DetailDir)
+IncludeDir = -I./$(CurrDir) -I./$(TestDir) -I./$(BaseDir) -I./$(DetailDir)
 
 all: tl
 

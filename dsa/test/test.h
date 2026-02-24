@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core.h"
-#include "expect.h"
+#include "./detail/core.h"
+#include "./detail/expect.h"
 
 namespace testing {
 
