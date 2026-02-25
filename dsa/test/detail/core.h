@@ -128,10 +128,10 @@ protected:
     test_base() = default;
     ~test_base() = default;
 
-    void init() {}
-    void reset() {}
+    constexpr void init() {}
+    constexpr void reset() {}
 
-    bool test_body() { return true; }
+    constexpr bool test_body() { return true; }
 };
 
 static inline int run_all_tests() {
