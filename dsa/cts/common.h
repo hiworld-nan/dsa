@@ -45,8 +45,8 @@ concept LiteralType = std::is_trivially_destructible_v<T> && (std::is_scalar_v<T
                                                               (std::is_class_v<T> && std::is_aggregate_v<T>));
 
 template <CharPointer Pointer>
-[[gnu::always_inline]]
-static inline constexpr std::size_t compileTimeStrlen(const Pointer ptr) {
+[[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]]
+inline static constexpr std::size_t compileTimeStrlen(const Pointer ptr) {
     if (nullptr == ptr) {
         return 0;
     }
@@ -63,8 +63,8 @@ static inline constexpr std::size_t compileTimeStrlen(const Pointer ptr) {
     return size;
 }
 
-[[gnu::always_inline]]
-static inline constexpr bool compileTimeIsspace(int32_t c) noexcept {
+[[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]]
+inline static constexpr bool compileTimeIsspace(int32_t c) noexcept {
     if (c == EOF) {
         return false;
     }
@@ -79,22 +79,24 @@ static inline constexpr bool compileTimeIsspace(int32_t c) noexcept {
            || (uc == 0x0D);  // \r 回车符
 }
 
-[[gnu::always_inline]] static inline constexpr bool compileTimeIsspace(char c) noexcept {
+[[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]] inline static constexpr bool compileTimeIsspace(
+    char c) noexcept {
     return compileTimeIsspace(std::char_traits<char>::to_int_type(c));
 }
 
 template <IntegerType T>
-[[gnu::always_inline]] static inline constexpr T clamp(T value, T min, T max) {
+[[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]] inline static constexpr T clamp(T value, T min,
+                                                                                          T max) {
     return value < min ? min : value > max ? max : value;
 }
 
 template <IntegerType T>
-[[gnu::always_inline]] static inline constexpr T clamp_to_range(T value) {
+[[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]] inline static constexpr T clamp_to_range(T value) {
     return clamp(value, std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
 }
 
 template <UIntegerType T>
-[[gnu::always_inline]] static inline constexpr T is_power_of_two(T value) {
+[[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]] inline static constexpr T is_power_of_two(T value) {
     return std::has_single_bit(value);
 }
 

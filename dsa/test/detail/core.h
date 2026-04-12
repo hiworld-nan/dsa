@@ -9,12 +9,12 @@
 #include <string>
 #include <vector>
 
-#include "singleton.h"
+#include "../../common/singleton.h"
 
 namespace testing {
 
-class test_results : public testing::singleton<test_results> {
-    friend class testing::singleton<test_results>;
+class test_results : public common::singleton<test_results> {
+    friend class common::singleton<test_results>;
 
 private:
     int32_t total_tests_ = 0;
@@ -83,8 +83,8 @@ struct test_case {
     functionT func;
 };
 
-struct test_repository : public testing::singleton<test_repository> {
-    friend class testing::singleton<test_repository>;
+struct test_repository : public common::singleton<test_repository> {
+    friend class common::singleton<test_repository>;
 
 private:
     test_repository() = default;

@@ -10,7 +10,7 @@
 
 #include "core.h"
 
-namespace detail {
+namespace testing {
 
 struct Compare {
     template <class T, class U>
@@ -23,7 +23,8 @@ struct Compare {
     };
 
     template <class T, class U>
-    static inline bool equal(const T& actual, const U& expected) {
+    [[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]]
+    inline static bool equal(const T& actual, const U& expected) {
         if constexpr (std::is_arithmetic<T>::value && std::is_arithmetic<U>::value) {
             using common_t = typename common<T, U>::type;
             const common_t a = static_cast<common_t>(actual);
@@ -48,7 +49,8 @@ struct Compare {
     }
 
     template <class T, class U>
-    static inline bool gt(const T& actual, const U& expected) {
+    [[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]]
+    inline static bool gt(const T& actual, const U& expected) {
         if constexpr (std::is_arithmetic<T>::value && std::is_arithmetic<U>::value) {
             using common_t = typename common<T, U>::type;
             const common_t a = static_cast<common_t>(actual);
@@ -70,7 +72,8 @@ struct Compare {
     }
 
     template <class T, class U>
-    static inline bool lt(const T& actual, const U& expected) {
+    [[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]]
+    inline static bool lt(const T& actual, const U& expected) {
         if constexpr (std::is_arithmetic<T>::value && std::is_arithmetic<U>::value) {
             using common_t = typename common<T, U>::type;
             const common_t a = static_cast<common_t>(actual);
@@ -91,12 +94,14 @@ struct Compare {
     }
 
     template <class T, class U>
-    static inline bool ge(const T& actual, const U& expected) {
+    [[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]]
+    inline static bool ge(const T& actual, const U& expected) {
         return !lt(actual, expected);
     }
 
     template <class T, class U>
-    static inline bool le(const T& actual, const U& expected) {
+    [[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]]
+    inline static bool le(const T& actual, const U& expected) {
         return !gt(actual, expected);
     }
 };
@@ -120,7 +125,7 @@ static void print_success_msg(const std::string& expr, const T& actual, const U&
 template <class T>
 static void expect(const T& condition, const std::string& fileName, int32_t lineNumber) {
     if (condition) {
-        std::cout << "[   ✓ PASS   ] @ " << fileName << ":" << lineNumber << "\n";
+        // std::cout << "[   ✓ PASS   ] @ " << fileName << ":" << lineNumber << "\n";
         testing::test_results::instance().pass_check();
     } else {
         std::cerr << "[   ✗ FAIL   ] @ " << fileName << ":" << lineNumber << "\n";
@@ -132,7 +137,8 @@ static void expect(const T& condition, const std::string& fileName, int32_t line
 template <class T, class U>
 static void expect_eq(const T& actual, const U& expected, const std::string& fileName, int32_t lineNumber) {
     if (Compare::equal(actual, expected)) {
-        print_success_msg(" == ", actual, expected, fileName, lineNumber);
+        // print_success_msg(" == ", actual, expected, fileName, lineNumber);
+        testing::test_results::instance().pass_check();
     } else {
         print_failure_msg("EXPECT_EQ", actual, expected, fileName, lineNumber);
     }
@@ -141,7 +147,8 @@ static void expect_eq(const T& actual, const U& expected, const std::string& fil
 template <class T, class U>
 static void expect_ne(const T& actual, const U& expected, const std::string& fileName, int32_t lineNumber) {
     if (!Compare::equal(actual, expected)) {
-        print_success_msg(" != ", actual, expected, fileName, lineNumber);
+        // print_success_msg(" != ", actual, expected, fileName, lineNumber);
+        testing::test_results::instance().pass_check();
     } else {
         print_failure_msg("EXPECT_NE", actual, expected, fileName, lineNumber);
     }
@@ -150,7 +157,8 @@ static void expect_ne(const T& actual, const U& expected, const std::string& fil
 template <class T, class U>
 static void expect_le(const T& actual, const U& expected, const std::string& fileName, int32_t lineNumber) {
     if (Compare::le(actual, expected)) {
-        print_success_msg(" <=", actual, expected, fileName, lineNumber);
+        // print_success_msg(" <=", actual, expected, fileName, lineNumber);
+        testing::test_results::instance().pass_check();
     } else {
         print_failure_msg("EXPECT_LE", actual, expected, fileName, lineNumber);
     }
@@ -159,7 +167,8 @@ static void expect_le(const T& actual, const U& expected, const std::string& fil
 template <class T, class U>
 static void expect_ge(const T& actual, const U& expected, const std::string& fileName, int32_t lineNumber) {
     if (Compare::ge(actual, expected)) {
-        print_success_msg(" >= ", actual, expected, fileName, lineNumber);
+        // print_success_msg(" >= ", actual, expected, fileName, lineNumber);
+        testing::test_results::instance().pass_check();
     } else {
         print_failure_msg("EXPECT_GE", actual, expected, fileName, lineNumber);
     }
@@ -168,7 +177,8 @@ static void expect_ge(const T& actual, const U& expected, const std::string& fil
 template <class T, class U>
 static void expect_lt(const T& actual, const U& expected, const std::string& fileName, int32_t lineNumber) {
     if (Compare::lt(actual, expected)) {
-        print_success_msg(" < ", actual, expected, fileName, lineNumber);
+        // print_success_msg(" < ", actual, expected, fileName, lineNumber);
+        testing::test_results::instance().pass_check();
     } else {
         print_failure_msg("EXPECT_LT", actual, expected, fileName, lineNumber);
     }
@@ -177,10 +187,11 @@ static void expect_lt(const T& actual, const U& expected, const std::string& fil
 template <class T, class U>
 static void expect_gt(const T& actual, const U& expected, const std::string& fileName, int32_t lineNumber) {
     if (Compare::gt(actual, expected)) {
-        print_success_msg(" > ", actual, expected, fileName, lineNumber);
+        // print_success_msg(" > ", actual, expected, fileName, lineNumber);
+        testing::test_results::instance().pass_check();
     } else {
         print_failure_msg("EXPECT_GT", actual, expected, fileName, lineNumber);
     }
 }
 
-}  // namespace detail
+}  // namespace testing

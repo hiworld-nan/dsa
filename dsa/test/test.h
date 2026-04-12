@@ -1,17 +1,11 @@
 #pragma once
 
+#include "../common/macros.h"
 #include "./detail/core.h"
 #include "./detail/expect.h"
 
 namespace testing {
-
-// todo: improve this
-#ifndef STRINGIFY
-#define STRINGIFY(x) #x
-#endif
-#ifndef TOSTRING
-#define TOSTRING(x) STRINGIFY(x)
-#endif
+using namespace common::macros;
 
 #ifndef CHECK_COMPILE_TIME
 #define CHECK_COMPILE_TIME(...)                                                                             \
@@ -46,18 +40,18 @@ namespace testing {
 #define CHECK_GE(_a_, _b_, ...) CHECK(((_a_) >= (_b_)), ##__VA_ARGS__)
 #define CHECK_LE(_a_, _b_, ...) CHECK(((_a_) <= (_b_)), ##__VA_ARGS__)
 
-#define EXPECT_TRUE(condition) detail::expect(condition, __FILE__, __LINE__)
-#define EXPECT_FALSE(condition) EXPECT_TRUE(!(condition))
-#define EXPECT_EQ(_a_, _b_) detail::expect_eq(_a_, _b_, __FILE__, __LINE__)
-#define EXPECT_NE(_a_, _b_) detail::expect_ne(_a_, _b_, __FILE__, __LINE__)
-#define EXPECT_GT(_a_, _b_) detail::expect_gt(_a_, _b_, __FILE__, __LINE__)
-#define EXPECT_LT(_a_, _b_) detail::expect_lt(_a_, _b_, __FILE__, __LINE__)
-#define EXPECT_GE(_a_, _b_) detail::expect_ge(_a_, _b_, __FILE__, __LINE__)
-#define EXPECT_LE(_a_, _b_) detail::expect_le(_a_, _b_, __FILE__, __LINE__)
+#define EXPECT_TRUE(condition) testing::expect(condition, __FILE__, __LINE__)
+#define EXPECT_FALSE(condition) testing::expect(!(condition), __FILE__, __LINE__)
+#define EXPECT_EQ(_a_, _b_) testing::expect_eq(_a_, _b_, __FILE__, __LINE__)
+#define EXPECT_NE(_a_, _b_) testing::expect_ne(_a_, _b_, __FILE__, __LINE__)
+#define EXPECT_GT(_a_, _b_) testing::expect_gt(_a_, _b_, __FILE__, __LINE__)
+#define EXPECT_LT(_a_, _b_) testing::expect_lt(_a_, _b_, __FILE__, __LINE__)
+#define EXPECT_GE(_a_, _b_) testing::expect_ge(_a_, _b_, __FILE__, __LINE__)
+#define EXPECT_LE(_a_, _b_) testing::expect_le(_a_, _b_, __FILE__, __LINE__)
 
 #define TEST_F(TypeName, TestName)                                                              \
-    class TypeName##_##TestName##_impl : public TypeName {                                      \
-    public:                                                                                     \
+    struct TypeName##_##TestName##_impl : public TypeName {                                     \
+        using TypeName::TypeName;                                                               \
         bool test_body();                                                                       \
     };                                                                                          \
     static const int s_##TypeName##_##TestName = [] {                                           \
