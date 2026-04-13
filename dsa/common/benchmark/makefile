@@ -11,7 +11,7 @@ BENCHMARK_DETAIL_DIR = $(BENCHMARK_DIR)/detail
 
 INCLUDES = -I$(COMMON_DIR) -I$(BENCHMARK_DIR) -I$(BENCHMARK_DETAIL_DIR)
 
-SRC = tsc_clock_benchmark.cpp ../tsc_drift.cpp
+SRC = tsc_clock_benchmark.cpp
 TARGET = bin/tsc_clock_benchmark
 
 # Default target
