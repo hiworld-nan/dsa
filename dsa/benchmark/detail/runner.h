@@ -32,7 +32,7 @@ struct Config {
     NanoSeconds max_time_{1'000'000'000};  // 1000ms
     std::size_t warmup_{10};
     std::size_t min_iterations_{1};
-    std::size_t max_iterations_{1'000'000'000};
+    std::size_t max_iterations_{100'000};
     std::size_t repetitions_{1000};
     std::size_t threads_{1};
     bool verbose_{false};
@@ -246,14 +246,11 @@ private:
         }
 
         double ns_per_iter = static_cast<double>(elapsed) / cfg.warmup_;
-        // 总时间 = iters * ns_per_iter * repetitions
-        auto needed = static_cast<IterationCount>(cfg.max_time_ / (ns_per_iter * cfg.repetitions_));
-
-        needed = std::max(needed, min_iters);
+        auto needed = static_cast<IterationCount>(cfg.max_time_ / ns_per_iter);
         needed = std::clamp(needed, cfg.min_iterations_, cfg.max_iterations_);
 
         // 向上取整到 10 的幂
-        IterationCount rounded = min_iters;
+        IterationCount rounded = cfg.min_iterations_;
         while (rounded < needed) {
             rounded *= 10;
         }

@@ -15,7 +15,7 @@
 #include "../../common/constants.h"
 #include "../../common/macros.h"
 
-namespace utils::utility {
+namespace utils {
 
 using namespace common;
 
@@ -182,4 +182,4 @@ constexpr std::size_t cache_optimal_capacity(CacheLevel level = CacheLevel::L2) 
 template <typename T, std::size_t Capacity>
 inline constexpr bool fits_l2_cache_v = (Capacity * sizeof(T)) <= memory_constants::kL2CacheSize;
 
-}  // namespace utils::utility
+}  // namespace utils
