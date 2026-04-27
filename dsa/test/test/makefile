@@ -3,14 +3,14 @@ CC = g++
 Source = $(wildcard ./*.cpp)
 Object = $(patsubst %.cpp, %.o, $(Source))
 
-CFlags = -Wall -m64
+CFlags = -Wall -m64 -std=c++20
 OFlags = -Ofast -march=native -mtune=native
-LDFlags = -v
+LDFlags = -v -pthread
 
 CurrDir = ./
 BaseDir = ./..
 DetailDir = $(BaseDir)/detail
-IncludeDir = -I./$(CurrDir) -I./$(BaseDir) -I./$(DetailDir)
+IncludeDir = -I$(CurrDir) -I$(BaseDir) -I$(DetailDir)
 
 all: test
 

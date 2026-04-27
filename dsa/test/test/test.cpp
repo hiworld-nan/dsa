@@ -50,12 +50,21 @@ TEST_F(VectorTest, ElementCheck) {
     return true;
 }
 
-TEST(CompileTest, BasicTest) {
+TEST(BasicTest, BasicTest) {
     int32_t a = 10, b = 0;
-    EXPECT_EQ(a, b);
-    EXPECT_LE(2, 1);
+    EXPECT_NE(a, b);
+    EXPECT_GE(2, 1);
     CHECK_COMPILE_TIME(10 == 10);
-    EXPECT_TRUE(a == b);
+    EXPECT_FALSE(a == b);
+    return true;
+}
+
+TEST(StringTest, BasicTest) {
+    std::string str = "Hello, World!";
+    EXPECT_EQ(str, "Hello, World!");
+    EXPECT_NE("", "Hello, World");
+    EXPECT_NE(str.data(), "Hello, World");
+    EXPECT_EQ("test", "test");
     return true;
 }
 

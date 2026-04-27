@@ -6,6 +6,7 @@
 #include <iostream>
 #include <limits>
 #include <string>
+#include <string_view>
 #include <type_traits>
 
 #include "core.h"
@@ -22,28 +23,47 @@ struct Compare {
         static constexpr type epsilon = std::is_same<type, float>::value ? 1e-6 : 1e-9;
     };
 
+private:
+    // 安全地将任意可转换为 std::string_view 的值转为 string_view，
+    // 仅在实值为指针时检查空指针并返回空视图，其他情况直接构造。
+    template <class S>
+    static std::string_view to_string_view(const S& s) {
+        if constexpr (std::is_pointer_v<S>) {
+            return s ? std::string_view(s) : std::string_view();
+        } else {
+            return std::string_view(s);
+        }
+    }
+
+public:
     template <class T, class U>
     [[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]]
     inline static bool equal(const T& actual, const U& expected) {
-        if constexpr (std::is_arithmetic<T>::value && std::is_arithmetic<U>::value) {
+        // 1. 算术类型（整型、浮点）
+        if constexpr (std::is_arithmetic_v<T> && std::is_arithmetic_v<U>) {
             using common_t = typename common<T, U>::type;
             const common_t a = static_cast<common_t>(actual);
             const common_t b = static_cast<common_t>(expected);
-            if constexpr (std::is_floating_point<T>::value || std::is_floating_point<U>::value) {
+            if constexpr (std::is_floating_point_v<T> || std::is_floating_point_v<U>) {
                 if (std::isnan(a) || std::isnan(b)) {
                     return false;
                 }
-                // 处理Inf：Inf和自身相等
                 if (std::isinf(a) && std::isinf(b)) {
                     return (a > 0) == (b > 0);
                 }
-
                 const common_t epsilon = common<T, U>::epsilon;
                 return std::fabs(a - b) < epsilon;
             } else {
                 return a == b;
             }
-        } else {
+        }
+        // 2. 可转换为 std::string_view 的类型（const char*、char*、char[]、std::string 等）
+        else if constexpr (std::is_convertible_v<T, std::string_view> &&
+                           std::is_convertible_v<U, std::string_view>) {
+            return to_string_view(actual) == to_string_view(expected);
+        }
+        // 3. 其他类型
+        else {
             return actual == expected;
         }
     }
@@ -51,21 +71,22 @@ struct Compare {
     template <class T, class U>
     [[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]]
     inline static bool gt(const T& actual, const U& expected) {
-        if constexpr (std::is_arithmetic<T>::value && std::is_arithmetic<U>::value) {
+        if constexpr (std::is_arithmetic_v<T> && std::is_arithmetic_v<U>) {
             using common_t = typename common<T, U>::type;
             const common_t a = static_cast<common_t>(actual);
             const common_t b = static_cast<common_t>(expected);
-
-            if constexpr (std::is_floating_point<T>::value || std::is_floating_point<U>::value) {
+            if constexpr (std::is_floating_point_v<T> || std::is_floating_point_v<U>) {
                 if (std::isnan(a) || std::isnan(b)) {
                     return false;
                 }
-
                 const common_t epsilon = common<T, U>::epsilon;
                 return (a - b) > epsilon;
             } else {
                 return a > b;
             }
+        } else if constexpr (std::is_convertible_v<T, std::string_view> &&
+                             std::is_convertible_v<U, std::string_view>) {
+            return to_string_view(actual) > to_string_view(expected);
         } else {
             return actual > expected;
         }
@@ -74,20 +95,22 @@ struct Compare {
     template <class T, class U>
     [[nodiscard, gnu::hot, gnu::always_inline, gnu::flatten]]
     inline static bool lt(const T& actual, const U& expected) {
-        if constexpr (std::is_arithmetic<T>::value && std::is_arithmetic<U>::value) {
+        if constexpr (std::is_arithmetic_v<T> && std::is_arithmetic_v<U>) {
             using common_t = typename common<T, U>::type;
             const common_t a = static_cast<common_t>(actual);
             const common_t b = static_cast<common_t>(expected);
-            if constexpr (std::is_floating_point<T>::value || std::is_floating_point<U>::value) {
+            if constexpr (std::is_floating_point_v<T> || std::is_floating_point_v<U>) {
                 if (std::isnan(a) || std::isnan(b)) {
                     return false;
                 }
-
                 const common_t epsilon = common<T, U>::epsilon;
                 return (a - b) < -epsilon;
             } else {
                 return a < b;
             }
+        } else if constexpr (std::is_convertible_v<T, std::string_view> &&
+                             std::is_convertible_v<U, std::string_view>) {
+            return to_string_view(actual) < to_string_view(expected);
         } else {
             return actual < expected;
         }

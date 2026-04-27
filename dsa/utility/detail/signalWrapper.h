@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <array>
 #include <cerrno>
+#include <csignal>
 #include <cstdint>
 #include <functional>
 #include <unordered_map>
@@ -55,6 +56,11 @@ public:
 
     SignalSet& del(int signum) noexcept {
         sigdelset(&set_, signum);
+        return *this;
+    }
+
+    SignalSet& reset() noexcept {
+        sigemptyset(&set_);
         return *this;
     }
 
@@ -329,7 +335,7 @@ private:
 // =============================================================================
 
 /// 设置忽略指定信号
-inline void ignore_signal(int signum) {
+static inline void ignore_signal(int signum) {
     struct sigaction sa {};
     sa.sa_handler = SIG_IGN;
     sigemptyset(&sa.sa_mask);
@@ -338,7 +344,7 @@ inline void ignore_signal(int signum) {
 }
 
 /// 恢复信号默认处理
-inline void default_signal(int signum) {
+static inline void default_signal(int signum) {
     struct sigaction sa {};
     sa.sa_handler = SIG_DFL;
     sigemptyset(&sa.sa_mask);
@@ -347,7 +353,7 @@ inline void default_signal(int signum) {
 }
 
 /// 发送信号给自身
-inline void raise_signal(int signum) { raise(signum); }
+static inline void raise_signal(int signum) { raise(signum); }
 
 /// 获取信号名称
 [[nodiscard]] inline const char* signal_name(int signum) noexcept {

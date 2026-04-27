@@ -79,11 +79,11 @@ TEST(SignalSet, BlockUnblock) {
 // =============================================================================
 
 TEST(SignalName, KnownSignals) {
-    EXPECT_EQ(std::string(signal_name(SIGINT)), std::string("SIGINT"));
-    EXPECT_EQ(std::string(signal_name(SIGTERM)), std::string("SIGTERM"));
-    EXPECT_EQ(std::string(signal_name(SIGSEGV)), std::string("SIGSEGV"));
-    EXPECT_EQ(std::string(signal_name(SIGKILL)), std::string("SIGKILL"));
-    EXPECT_EQ(std::string(signal_name(999)), std::string("UNKNOWN"));
+    EXPECT_EQ(signal_name(SIGINT), "SIGINT");
+    EXPECT_EQ(signal_name(SIGTERM), "SIGTERM");
+    EXPECT_EQ(signal_name(SIGSEGV), "SIGSEGV");
+    EXPECT_EQ(signal_name(SIGKILL), "SIGKILL");
+    EXPECT_EQ(signal_name(999), "UNKNOWN");
     return true;
 }
 
