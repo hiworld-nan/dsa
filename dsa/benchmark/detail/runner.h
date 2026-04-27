@@ -239,10 +239,10 @@ private:
             bm.reset();
         }
 
-        constexpr IterationCount min_iters = 100'000;
+        // constexpr IterationCount min_iters = 100'000;
         auto elapsed = t.elapsed_ns();
         if (elapsed <= 0) {
-            return min_iters;
+            return cfg.min_iterations_;
         }
 
         double ns_per_iter = static_cast<double>(elapsed) / cfg.warmup_;

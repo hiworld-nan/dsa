@@ -127,11 +127,7 @@ private:
 // 辅助函数
 // =============================================================================
 
-inline NanoSeconds now_ns() noexcept {
-    return std::chrono::duration_cast<std::chrono::nanoseconds>(
-               std::chrono::steady_clock::now().time_since_epoch())
-        .count();
-}
+inline NanoSeconds now_ns() noexcept { return common::TscClock::instance().now(); }
 
 inline std::uint64_t now_cycles() noexcept { return common::rdtscp(); }
 
